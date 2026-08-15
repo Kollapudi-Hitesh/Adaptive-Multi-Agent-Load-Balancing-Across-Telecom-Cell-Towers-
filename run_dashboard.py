@@ -8,11 +8,17 @@ import runpy
 PORT = int(os.environ.get("PORT", 10000))
 
 
-# Run the existing mid-sem Python program
+# ============================================================
+# RUN MID-SEM PYTHON PROGRAM
+# ============================================================
+
 data = runpy.run_path("midsem_demo.py")
 
 
-# Prepare results for HTML
+# ============================================================
+# SEND RESULTS TO HTML
+# ============================================================
+
 results = {
 
     "dataset_records": len(data["df"]),
@@ -57,9 +63,36 @@ results = {
 }
 
 
+# ============================================================
+# WEB SERVER
+# ============================================================
+
 class Handler(http.server.SimpleHTTPRequestHandler):
 
+
     def do_GET(self):
+
+        # ----------------------------------------------------
+        # MAIN PAGE
+        # ----------------------------------------------------
+
+        if self.path == "/":
+
+            self.send_response(302)
+
+            self.send_header(
+                "Location",
+                "/midsem_dashboard.html"
+            )
+
+            self.end_headers()
+
+            return
+
+
+        # ----------------------------------------------------
+        # PYTHON RESULTS API
+        # ----------------------------------------------------
 
         if self.path == "/api/results":
 
@@ -76,6 +109,11 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             )
 
             self.send_header(
+                "Access-Control-Allow-Origin",
+                "*"
+            )
+
+            self.send_header(
                 "Content-Length",
                 str(len(response))
             )
@@ -89,8 +127,16 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             return
 
 
+        # ----------------------------------------------------
+        # NORMAL HTML / CSS / JS FILES
+        # ----------------------------------------------------
+
         return super().do_GET()
 
+
+# ============================================================
+# START SERVER
+# ============================================================
 
 server = socketserver.TCPServer(
     ("0.0.0.0", PORT),
@@ -98,8 +144,19 @@ server = socketserver.TCPServer(
 )
 
 
-print("Telecom dashboard server started.")
+print("============================================================")
+print("       TELECOM NETWORK LOAD BALANCING DASHBOARD")
+print("============================================================")
 
-print("Port:", PORT)
+print("Server running on port:", PORT)
+
+print("Dashboard:")
+print("/midsem_dashboard.html")
+
+print("API:")
+print("/api/results")
+
+print("============================================================")
+
 
 server.serve_forever()
