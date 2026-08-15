@@ -1647,40 +1647,440 @@ function getStatus(load) {
 
 function drawNetwork() {
 
-    const svg =
-        document.getElementById(
-            "network"
-        );
-
+    const svg = document.getElementById("network");
 
     svg.innerHTML = "";
 
+    const allNodes = Object.keys(DATA.node_loads);
 
-    const nodes =
-        Object.keys(
-            DATA.node_loads
+    // ========================================================
+    // SELECT ONLY IMPORTANT NODES
+    // ========================================================
+
+    let importantNodes = [];
+
+    // 1. Add A* path
+    DATA.astar_path.forEach(node => {
+
+        if (!importantNodes.includes(node)) {
+            importantNodes.push(node);
+        }
+
+    });
+
+    // 2. Add source
+    if (!importantNodes.includes(DATA.source)) {
+        importantNodes.unshift(DATA.source);
+    }
+
+    // 3. Add target
+    if (!importantNodes.includes(DATA.target)) {
+        importantNodes.push(DATA.target);
+    }
+
+    // 4. Add a few high-load towers
+    const highLoadNodes = allNodes
+        .sort(
+            (a, b) =>
+                DATA.node_loads[b] -
+                DATA.node_loads[a]
+        );
+
+    highLoadNodes.forEach(node => {
+
+        if (
+            importantNodes.length < 10 &&
+            !importantNodes.includes(node)
+        ) {
+
+            importantNodes.push(node);
+
+        }
+
+    });
+
+
+    // ========================================================
+    // LIMIT TO 10 NODES
+    // ========================================================
+
+    importantNodes =
+        importantNodes.slice(0, 10);
+
+
+    // ========================================================
+    // POSITION NODES
+    // ========================================================
+
+    const positions = {};
+
+    const startX = 120;
+
+    const endX = 980;
+
+    const centerY = 300;
+
+    const spacing =
+        importantNodes.length > 1
+            ? (endX - startX) /
+              (importantNodes.length - 1)
+            : 0;
+
+
+    importantNodes.forEach(
+        (node, index) => {
+
+            positions[node] = {
+
+                x:
+                    startX +
+                    index * spacing,
+
+                y:
+                    centerY
+
+            };
+
+        }
+    );
+
+
+    // ========================================================
+    // DRAW EDGES
+    // ========================================================
+
+    for (
+        let i = 0;
+        i < importantNodes.length - 1;
+        i++
+    ) {
+
+        const node1 =
+            importantNodes[i];
+
+        const node2 =
+            importantNodes[i + 1];
+
+        const p1 =
+            positions[node1];
+
+        const p2 =
+            positions[node2];
+
+
+        const line =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "line"
+            );
+
+
+        line.setAttribute(
+            "x1",
+            p1.x
+        );
+
+        line.setAttribute(
+            "y1",
+            p1.y
+        );
+
+        line.setAttribute(
+            "x2",
+            p2.x
+        );
+
+        line.setAttribute(
+            "y2",
+            p2.y
         );
 
 
-    if(nodes.length === 0) {
+        // Check whether this edge belongs
+        // to the A* path
 
-        return;
+        const pathIndex =
+            DATA.astar_path.indexOf(
+                node1
+            );
+
+        const nextPath =
+            DATA.astar_path[
+                pathIndex + 1
+            ];
+
+
+        if (
+            DATA.astar_path.includes(node1) &&
+            nextPath === node2
+        ) {
+
+            line.setAttribute(
+                "class",
+                "route-edge"
+            );
+
+        }
+
+        else {
+
+            line.setAttribute(
+                "class",
+                "edge"
+            );
+
+        }
+
+
+        svg.appendChild(line);
 
     }
 
 
-    const positions = {};
+    // ========================================================
+    // DRAW NODES
+    // ========================================================
+
+    importantNodes.forEach(
+        node => {
+
+            const position =
+                positions[node];
+
+            const load =
+                DATA.node_loads[node];
+
+            const status =
+                getStatus(load);
 
 
-    const centerX = 550;
+            const group =
+                document.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    "g"
+                );
 
-    const centerY = 325;
 
-    const radius =
-        Math.min(
-            260,
-            30 + nodes.length * 9
-        );
+            group.setAttribute(
+                "class",
+                "node"
+            );
+
+
+            // ------------------------------------------------
+            // NODE COLOR
+            // ------------------------------------------------
+
+            let nodeClass =
+                "normal-node";
+
+
+            if (
+                node === DATA.source
+            ) {
+
+                nodeClass =
+                    "source-node";
+
+            }
+
+            else if (
+                node === DATA.target
+            ) {
+
+                nodeClass =
+                    "target-node";
+
+            }
+
+            else if (
+                status === "High"
+            ) {
+
+                nodeClass =
+                    "high-node";
+
+            }
+
+
+            // ------------------------------------------------
+            // CIRCLE
+            // ------------------------------------------------
+
+            const circle =
+                document.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    "circle"
+                );
+
+
+            circle.setAttribute(
+                "cx",
+                position.x
+            );
+
+            circle.setAttribute(
+                "cy",
+                position.y
+            );
+
+            circle.setAttribute(
+                "r",
+                30
+            );
+
+
+            circle.setAttribute(
+                "class",
+                "node-circle " +
+                nodeClass
+            );
+
+
+            group.appendChild(circle);
+
+
+            // ------------------------------------------------
+            // LOAD VALUE
+            // ------------------------------------------------
+
+            const loadText =
+                document.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    "text"
+                );
+
+
+            loadText.setAttribute(
+                "x",
+                position.x
+            );
+
+            loadText.setAttribute(
+                "y",
+                position.y + 5
+            );
+
+            loadText.setAttribute(
+                "class",
+                "user-label"
+            );
+
+
+            loadText.textContent =
+                Math.round(
+                    load * 1000
+                ) +
+                " users";
+
+
+            group.appendChild(
+                loadText
+            );
+
+
+            // ------------------------------------------------
+            // TOWER NAME
+            // ------------------------------------------------
+
+            const label =
+                document.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    "text"
+                );
+
+
+            label.setAttribute(
+                "x",
+                position.x
+            );
+
+            label.setAttribute(
+                "y",
+                position.y + 55
+            );
+
+
+            label.setAttribute(
+                "class",
+                "node-label"
+            );
+
+
+            label.textContent =
+                node;
+
+
+            group.appendChild(
+                label
+            );
+
+
+            // ------------------------------------------------
+            // STATUS
+            // ------------------------------------------------
+
+            const statusText =
+                document.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    "text"
+                );
+
+
+            statusText.setAttribute(
+                "x",
+                position.x
+            );
+
+            statusText.setAttribute(
+                "y",
+                position.y + 72
+            );
+
+
+            statusText.setAttribute(
+                "class",
+                "node-label"
+            );
+
+
+            statusText.textContent =
+                status;
+
+
+            group.appendChild(
+                statusText
+            );
+
+
+            // ------------------------------------------------
+            // CLICK TOWER
+            // ------------------------------------------------
+
+            group.addEventListener(
+                "click",
+                function () {
+
+                    selectTower(node);
+
+                }
+            );
+
+
+            svg.appendChild(group);
+
+        }
+    );
+
+
+    // ========================================================
+    // SAVE POSITIONS FOR ANIMATION
+    // ========================================================
+
+    window.networkPositions =
+        positions;
+
+}
 
 
     // --------------------------------------------------------
