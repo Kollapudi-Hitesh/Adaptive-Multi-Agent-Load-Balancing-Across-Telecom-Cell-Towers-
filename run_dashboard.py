@@ -2,57 +2,60 @@ from flask import Flask, request, jsonify, send_from_directory
 import pandas as pd
 import heapq
 import os
-import math
-
-
-# ============================================================
-# FLASK APP
-# ============================================================
 
 app = Flask(__name__)
 
 UPLOAD_FOLDER = "uploads"
-
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-
-# ============================================================
-# GLOBAL DATA
-# ============================================================
-
-current_results = None
+RESULTS = None
 
 
 # ============================================================
-# COLUMN DETECTION
+# FIND COLUMN
 # ============================================================
 
-def find_column(df, possible_names):
+def find_column(df, names):
 
-    columns_lower = {
-        str(c).lower().strip(): c
-        for c in df.columns
-    }
+    for name in names:
 
-    for name in possible_names:
+        for col in df.columns:
 
-        if name.lower() in columns_lower:
+            if str(col).strip().lower() == name.lower():
+                return col
 
-            return columns_lower[name.lower()]
+    # Partial match
+    for name in names:
 
-    # Partial matching
+        for col in df.columns:
 
-    for column in df.columns:
-
-        column_lower = str(column).lower()
-
-        for name in possible_names:
-
-            if name.lower() in column_lower:
-
-                return column
+            if name.lower() in str(col).lower():
+                return col
 
     return None
+
+
+# ============================================================
+# NORMALIZE COLUMN
+# ============================================================
+
+def normalize(series):
+
+    series = pd.to_numeric(
+        series,
+        errors="coerce"
+    ).fillna(0)
+
+    minimum = series.min()
+    maximum = series.max()
+
+    if maximum == minimum:
+        return pd.Series(
+            [0.0] * len(series),
+            index=series.index
+        )
+
+    return (series - minimum) / (maximum - minimum)
 
 
 # ============================================================
@@ -63,24 +66,20 @@ def analyse_dataset(file_path):
 
     df = pd.read_csv(file_path)
 
-
     # --------------------------------------------------------
-    # DETECT IMPORTANT COLUMNS
+    # FIND COLUMNS
     # --------------------------------------------------------
 
-    base_station_col = find_column(
+    site_col = find_column(
         df,
         [
             "Base station",
             "Base Station",
-            "base_station",
             "site",
             "Site",
-            "eNodeB",
             "Cell Site"
         ]
     )
-
 
     sector_col = find_column(
         df,
@@ -88,11 +87,9 @@ def analyse_dataset(file_path):
             "Sector",
             "sector",
             "Cell",
-            "cell",
-            "Sector ID"
+            "cell"
         ]
     )
-
 
     rb_col = find_column(
         df,
@@ -105,22 +102,18 @@ def analyse_dataset(file_path):
         ]
     )
 
-
     rrc_col = find_column(
         df,
         [
             "4G RRC users",
             "RRC users",
             "RRC Users",
-            "users",
             "Users",
-            "User Count",
-            "Number of Users"
+            "users"
         ]
     )
 
-
-    dl_col = find_column(
+    dl_users_col = find_column(
         df,
         [
             "4G active users DL",
@@ -129,8 +122,7 @@ def analyse_dataset(file_path):
         ]
     )
 
-
-    ul_col = find_column(
+    ul_users_col = find_column(
         df,
         [
             "4G active users UL",
@@ -139,8 +131,7 @@ def analyse_dataset(file_path):
         ]
     )
 
-
-    data_dl_col = find_column(
+    dl_data_col = find_column(
         df,
         [
             "4G data volume DL",
@@ -149,8 +140,7 @@ def analyse_dataset(file_path):
         ]
     )
 
-
-    data_ul_col = find_column(
+    ul_data_col = find_column(
         df,
         [
             "4G data volume UL",
@@ -159,32 +149,22 @@ def analyse_dataset(file_path):
         ]
     )
 
+    # --------------------------------------------------------
+    # SITE FALLBACK
+    # --------------------------------------------------------
+
+    if site_col is None:
+
+        df["Site"] = [
+            "Site " + str(i + 1)
+            for i in range(len(df))
+        ]
+
+        site_col = "Site"
 
     # --------------------------------------------------------
-    # BASE STATION / SECTOR FALLBACK
+    # SECTOR FALLBACK
     # --------------------------------------------------------
-
-    if base_station_col is None:
-
-        # Try first text column
-
-        text_columns = df.select_dtypes(
-            include=["object"]
-        ).columns.tolist()
-
-        if text_columns:
-
-            base_station_col = text_columns[0]
-
-        else:
-
-            df["Base station"] = [
-                f"Site {i+1}"
-                for i in range(len(df))
-            ]
-
-            base_station_col = "Base station"
-
 
     if sector_col is None:
 
@@ -192,156 +172,53 @@ def analyse_dataset(file_path):
 
         sector_col = "Sector"
 
-
     # --------------------------------------------------------
-    # CONVERT NUMERIC COLUMNS
-    # --------------------------------------------------------
-
-    numeric_columns = [
-        rb_col,
-        rrc_col,
-        dl_col,
-        ul_col,
-        data_dl_col,
-        data_ul_col
-    ]
-
-
-    for column in numeric_columns:
-
-        if column is not None:
-
-            df[column] = pd.to_numeric(
-                df[column],
-                errors="coerce"
-            )
-
-            df[column] = df[column].fillna(0)
-
-
-    # --------------------------------------------------------
-    # USER COLUMN
+    # USER FALLBACK
     # --------------------------------------------------------
 
     if rrc_col is None:
 
-        if dl_col is not None:
+        if dl_users_col is not None:
 
-            df["_users"] = df[dl_col]
+            df["_users"] = pd.to_numeric(
+                df[dl_users_col],
+                errors="coerce"
+            ).fillna(0)
 
-        elif ul_col is not None:
+        elif ul_users_col is not None:
 
-            df["_users"] = df[ul_col]
+            df["_users"] = pd.to_numeric(
+                df[ul_users_col],
+                errors="coerce"
+            ).fillna(0)
 
         else:
-
-            # Last fallback
 
             df["_users"] = 1
 
         rrc_col = "_users"
 
-
     # --------------------------------------------------------
-    # LOAD COMPONENTS
-    # --------------------------------------------------------
-
-    load_components = []
-
-
-    def normalize(column):
-
-        minimum = df[column].min()
-
-        maximum = df[column].max()
-
-        if maximum == minimum:
-
-            return pd.Series(
-                [0] * len(df),
-                index=df.index
-            )
-
-        return (
-            (df[column] - minimum)
-            /
-            (maximum - minimum)
-        )
-
-
-    if rb_col is not None:
-
-        load_components.append(
-            (
-                normalize(rb_col),
-                0.50
-            )
-        )
-
-
-    if rrc_col is not None:
-
-        load_components.append(
-            (
-                normalize(rrc_col),
-                0.15
-            )
-        )
-
-
-    if dl_col is not None:
-
-        load_components.append(
-            (
-                normalize(dl_col),
-                0.15
-            )
-        )
-
-
-    if ul_col is not None:
-
-        load_components.append(
-            (
-                normalize(ul_col),
-                0.05
-            )
-        )
-
-
-    if data_dl_col is not None:
-
-        load_components.append(
-            (
-                normalize(data_dl_col),
-                0.10
-            )
-        )
-
-
-    if data_ul_col is not None:
-
-        load_components.append(
-            (
-                normalize(data_ul_col),
-                0.05
-            )
-        )
-
-
-    # --------------------------------------------------------
-    # FALLBACK LOAD
+    # CONVERT NUMERIC DATA
     # --------------------------------------------------------
 
-    if not load_components:
+    numeric_cols = [
+        rb_col,
+        rrc_col,
+        dl_users_col,
+        ul_users_col,
+        dl_data_col,
+        ul_data_col
+    ]
 
-        load_components.append(
-            (
-                normalize(rrc_col),
-                1.0
-            )
-        )
+    for col in numeric_cols:
 
+        if col is not None:
+
+            df[col] = pd.to_numeric(
+                df[col],
+                errors="coerce"
+            ).fillna(0)
 
     # --------------------------------------------------------
     # LOAD SCORE
@@ -349,390 +226,262 @@ def analyse_dataset(file_path):
 
     df["Load Score"] = 0.0
 
+    weights = []
+
+    if rb_col is not None:
+        weights.append(
+            (normalize(df[rb_col]), 0.50)
+        )
+
+    if rrc_col is not None:
+        weights.append(
+            (normalize(df[rrc_col]), 0.20)
+        )
+
+    if dl_users_col is not None:
+        weights.append(
+            (normalize(df[dl_users_col]), 0.10)
+        )
+
+    if ul_users_col is not None:
+        weights.append(
+            (normalize(df[ul_users_col]), 0.05)
+        )
+
+    if dl_data_col is not None:
+        weights.append(
+            (normalize(df[dl_data_col]), 0.10)
+        )
+
+    if ul_data_col is not None:
+        weights.append(
+            (normalize(df[ul_data_col]), 0.05)
+        )
+
+    if not weights:
+
+        weights.append(
+            (normalize(df[rrc_col]), 1.0)
+        )
 
     total_weight = sum(
-        weight
-        for _, weight in load_components
+        weight for values, weight in weights
     )
 
-
-    for values, weight in load_components:
+    for values, weight in weights:
 
         df["Load Score"] += (
-            values *
-            weight /
-            total_weight
+            values * weight / total_weight
         )
 
-
     # --------------------------------------------------------
-    # SECTOR INFORMATION
+    # GROUP BY SITE + SECTOR
     # --------------------------------------------------------
 
-    sector_load = (
-
+    grouped = (
         df.groupby(
-            [
-                base_station_col,
-                sector_col
-            ]
+            [site_col, sector_col]
         )
-
         .agg(
-
-            Load_Score=(
-                "Load Score",
-                "mean"
-            ),
-
-            Users=(
-                rrc_col,
-                "mean"
-            )
-
+            Load_Score=("Load Score", "mean"),
+            Users=(rrc_col, "mean")
         )
-
         .reset_index()
-
     )
-
 
     # --------------------------------------------------------
-    # STATUS
+    # LOAD STATUS
     # --------------------------------------------------------
 
-    low_threshold = (
-        sector_load["Load_Score"]
-        .quantile(0.50)
-    )
+    low_limit = grouped["Load_Score"].quantile(0.50)
+    high_limit = grouped["Load_Score"].quantile(0.75)
 
+    def get_status(value):
 
-    high_threshold = (
-        sector_load["Load_Score"]
-        .quantile(0.75)
-    )
-
-
-    def status(load):
-
-        if load <= low_threshold:
-
+        if value <= low_limit:
             return "Low"
 
-        elif load <= high_threshold:
-
+        if value <= high_limit:
             return "Moderate"
 
         return "High"
 
-
-    sector_load["Status"] = (
-        sector_load["Load_Score"]
-        .apply(status)
-    )
-
+    grouped["Status"] = grouped[
+        "Load_Score"
+    ].apply(get_status)
 
     # --------------------------------------------------------
-    # CREATE NETWORK
+    # CREATE NETWORK NODES
     # --------------------------------------------------------
 
-    network = {}
+    towers = {}
 
+    for _, row in grouped.iterrows():
 
-    for _, row in sector_load.iterrows():
+        site = str(row[site_col])
+        sector = str(row[sector_col])
 
-        node = (
-            f"{row[base_station_col]}-"
-            f"{row[sector_col]}"
-        )
+        node = site + "-" + sector
 
+        towers[node] = {
 
-        network[node] = {
+            "site": site,
 
-            "site":
-                str(row[base_station_col]),
+            "sector": sector,
 
-            "sector":
-                str(row[sector_col]),
+            "users": int(
+                round(row["Users"])
+            ),
 
-            "load":
-                float(row["Load_Score"]),
+            "load": float(
+                row["Load_Score"]
+            ),
 
-            "users":
-                float(row["Users"]),
+            "status": row["Status"],
 
             "neighbors": {}
 
         }
 
-
     # --------------------------------------------------------
-    # CONNECT SECTORS OF SAME SITE
-    # --------------------------------------------------------
-
-    sites = (
-        sector_load[
-            base_station_col
-        ]
-        .astype(str)
-        .unique()
-        .tolist()
-    )
-
-
-    for site in sites:
-
-        site_nodes = [
-
-            node
-
-            for node in network
-
-            if network[node]["site"] == site
-
-        ]
-
-
-        for i in range(len(site_nodes)):
-
-            for j in range(i + 1, len(site_nodes)):
-
-                a = site_nodes[i]
-
-                b = site_nodes[j]
-
-                network[a]["neighbors"][b] = 1
-
-                network[b]["neighbors"][a] = 1
-
-
-    # --------------------------------------------------------
-    # CONNECT DIFFERENT SITES
+    # CREATE EDGES
+    #
+    # Simple telecom topology:
+    # Each sector connects to nearby sectors.
     # --------------------------------------------------------
 
-    sites_sorted = sites
+    nodes = list(towers.keys())
 
+    for i in range(len(nodes) - 1):
 
-    for i in range(
-        len(sites_sorted) - 1
-    ):
+        a = nodes[i]
+        b = nodes[i + 1]
 
-        site_a = sites_sorted[i]
+        towers[a]["neighbors"][b] = 1
+        towers[b]["neighbors"][a] = 1
 
-        site_b = sites_sorted[i + 1]
+    # Add a few additional connections
 
+    for i in range(0, len(nodes) - 3, 3):
 
-        sectors_a = [
+        a = nodes[i]
+        b = nodes[i + 3]
 
-            network[node]["sector"]
-
-            for node in network
-
-            if network[node]["site"] == site_a
-
-        ]
-
-
-        sectors_b = [
-
-            network[node]["sector"]
-
-            for node in network
-
-            if network[node]["site"] == site_b
-
-        ]
-
-
-        for sector in sectors_a:
-
-            if sector in sectors_b:
-
-                node_a = (
-                    f"{site_a}-{sector}"
-                )
-
-                node_b = (
-                    f"{site_b}-{sector}"
-                )
-
-
-                network[node_a]["neighbors"][
-                    node_b
-                ] = 2
-
-
-                network[node_b]["neighbors"][
-                    node_a
-                ] = 2
-
+        towers[a]["neighbors"][b] = 2
+        towers[b]["neighbors"][a] = 2
 
     # --------------------------------------------------------
     # EDGE LIST
     # --------------------------------------------------------
 
     edges = []
-
     seen = set()
 
+    for node in towers:
 
-    for node in network:
-
-        for neighbor in network[node]["neighbors"]:
+        for neighbour in towers[node]["neighbors"]:
 
             pair = tuple(
-                sorted(
-                    [node, neighbor]
-                )
+                sorted([node, neighbour])
             )
-
 
             if pair not in seen:
 
                 edges.append(
-                    list(pair)
+                    [pair[0], pair[1]]
                 )
 
                 seen.add(pair)
 
-
     # --------------------------------------------------------
-    # FIND SOURCE
+    # SOURCE = MOST CONGESTED
     # --------------------------------------------------------
 
     source = max(
-        network,
-        key=lambda x:
-        network[x]["load"]
+        towers,
+        key=lambda node:
+        towers[node]["load"]
     )
 
-
-    source_load = (
-        network[source]["load"]
-    )
-
-
     # --------------------------------------------------------
-    # FIND TARGET
+    # TARGET = LOWEST LOAD
     # --------------------------------------------------------
 
-    candidates = [
-
+    possible_targets = [
         node
-
-        for node in network
-
+        for node in towers
         if node != source
-
     ]
 
-
     target = min(
-
-        candidates,
-
-        key=lambda x:
-        network[x]["load"]
-
+        possible_targets,
+        key=lambda node:
+        towers[node]["load"]
     )
-
-
-    target_load = (
-        network[target]["load"]
-    )
-
 
     # --------------------------------------------------------
     # DIJKSTRA
     # --------------------------------------------------------
 
-    def dijkstra(
-        graph,
-        start,
-        target
-    ):
+    def dijkstra(start, goal):
 
-        distances = {
+        distance = {
             node: float("inf")
-            for node in graph
+            for node in towers
         }
-
 
         previous = {
             node: None
-            for node in graph
+            for node in towers
         }
 
-
-        distances[start] = 0
-
+        distance[start] = 0
 
         queue = [
             (0, start)
         ]
 
-
         visited = set()
-
 
         while queue:
 
-            distance, current = (
-                heapq.heappop(queue)
+            current_distance, current = heapq.heappop(
+                queue
             )
 
-
             if current in visited:
-
                 continue
-
 
             visited.add(current)
 
-
-            if current == target:
-
+            if current == goal:
                 break
 
-
-            for neighbor, cost in (
-                graph[current]["neighbors"]
-                .items()
-            ):
+            for neighbour, cost in towers[
+                current
+            ]["neighbors"].items():
 
                 new_distance = (
-                    distance + cost
+                    current_distance + cost
                 )
 
+                if new_distance < distance[neighbour]:
 
-                if (
-                    new_distance
-                    <
-                    distances[neighbor]
-                ):
+                    distance[neighbour] = new_distance
 
-                    distances[neighbor] = (
-                        new_distance
-                    )
-
-                    previous[neighbor] = (
-                        current
-                    )
-
+                    previous[neighbour] = current
 
                     heapq.heappush(
                         queue,
                         (
                             new_distance,
-                            neighbor
+                            neighbour
                         )
                     )
 
-
         path = []
 
-        current = target
-
+        current = goal
 
         while current is not None:
 
@@ -740,151 +489,105 @@ def analyse_dataset(file_path):
 
             current = previous[current]
 
-
         path.reverse()
 
+        if path[0] != start:
 
-        if (
-            not path
-            or path[0] != start
-        ):
-
-            return [], float("inf"), len(visited)
-
+            return [], 0, len(visited)
 
         return (
             path,
-            distances[target],
+            distance[goal],
             len(visited)
         )
 
+    # --------------------------------------------------------
+    # A* HEURISTIC
+    # --------------------------------------------------------
+
+    def heuristic(node, goal):
+
+        return abs(
+            towers[node]["load"]
+            -
+            towers[goal]["load"]
+        )
 
     # --------------------------------------------------------
     # A*
     # --------------------------------------------------------
 
-    def heuristic(
-        graph,
-        node,
-        target
-    ):
-
-        return abs(
-
-            graph[node]["load"]
-            -
-            graph[target]["load"]
-
-        )
-
-
-    def astar(
-        graph,
-        start,
-        target
-    ):
-
-        open_list = []
-
+    def astar(start, goal):
 
         g_score = {
             node: float("inf")
-            for node in graph
+            for node in towers
         }
-
 
         previous = {
             node: None
-            for node in graph
+            for node in towers
         }
-
 
         g_score[start] = 0
 
-
-        h = heuristic(
-            graph,
-            start,
-            target
-        )
-
-
-        heapq.heappush(
-            open_list,
-            (h, 0, start)
-        )
-
+        queue = [
+            (
+                heuristic(start, goal),
+                0,
+                start
+            )
+        ]
 
         visited = set()
 
+        while queue:
 
-        while open_list:
-
-            f_score, current_g, current = (
-                heapq.heappop(open_list)
+            f_score, current_g, current = heapq.heappop(
+                queue
             )
 
-
             if current in visited:
-
                 continue
-
 
             visited.add(current)
 
-
-            if current == target:
-
+            if current == goal:
                 break
 
+            for neighbour, cost in towers[
+                current
+            ]["neighbors"].items():
 
-            for neighbor, cost in (
-                graph[current]["neighbors"]
-                .items()
-            ):
+                new_g = current_g + cost
 
-                tentative_g = (
-                    current_g + cost
-                )
+                if new_g < g_score[neighbour]:
 
+                    g_score[neighbour] = new_g
 
-                if (
-                    tentative_g
-                    <
-                    g_score[neighbor]
-                ):
+                    previous[neighbour] = current
 
-                    g_score[neighbor] = (
-                        tentative_g
-                    )
-
-
-                    h = heuristic(
-                        graph,
-                        neighbor,
-                        target
-                    )
-
-
-                    previous[neighbor] = (
-                        current
-                    )
-
-
-                    heapq.heappush(
-                        open_list,
-                        (
-                            tentative_g + h,
-                            tentative_g,
-                            neighbor
+                    new_f = (
+                        new_g
+                        +
+                        heuristic(
+                            neighbour,
+                            goal
                         )
                     )
 
+                    heapq.heappush(
+                        queue,
+                        (
+                            new_f,
+                            new_g,
+                            neighbour
+                        )
+                    )
 
         path = []
 
-        current = target
-
+        current = goal
 
         while current is not None:
 
@@ -892,75 +595,62 @@ def analyse_dataset(file_path):
 
             current = previous[current]
 
-
         path.reverse()
 
+        if path[0] != start:
 
-        if (
-            not path
-            or path[0] != start
-        ):
-
-            return [], float("inf"), len(visited)
-
+            return [], 0, len(visited)
 
         return (
             path,
-            g_score[target],
+            g_score[goal],
             len(visited)
         )
 
+    # --------------------------------------------------------
+    # RUN ALGORITHMS
+    # --------------------------------------------------------
 
     dijkstra_path, dijkstra_cost, dijkstra_nodes = (
         dijkstra(
-            network,
             source,
             target
         )
     )
-
 
     astar_path, astar_cost, astar_nodes = (
         astar(
-            network,
             source,
             target
         )
     )
 
-
     # --------------------------------------------------------
-    # TOWER DATA
+    # REMOVE NEIGHBOURS FROM JSON OUTPUT
     # --------------------------------------------------------
 
-    towers = {}
+    tower_output = {}
 
+    for node in towers:
 
-    for node in network:
-
-        towers[node] = {
+        tower_output[node] = {
 
             "site":
-                network[node]["site"],
+                towers[node]["site"],
 
             "sector":
-                network[node]["sector"],
+                towers[node]["sector"],
 
             "users":
-                round(
-                    network[node]["users"]
-                ),
+                towers[node]["users"],
 
             "load":
-                network[node]["load"],
+                towers[node]["load"],
 
             "status":
-                status(
-                    network[node]["load"]
-                )
+                towers[node]["status"]
 
         }
-
 
     # --------------------------------------------------------
     # FINAL RESULT
@@ -969,34 +659,38 @@ def analyse_dataset(file_path):
     return {
 
         "records":
-            len(df),
-
-        "columns":
-            list(df.columns),
+            int(len(df)),
 
         "base_stations":
-            len(sites),
+            int(
+                grouped[site_col]
+                .nunique()
+            ),
 
         "sectors":
-            len(network),
+            int(len(towers)),
 
         "edges":
-            len(edges),
+            int(len(edges)),
 
         "source":
             source,
 
         "source_load":
-            source_load,
+            float(
+                towers[source]["load"]
+            ),
 
         "target":
             target,
 
         "target_load":
-            target_load,
+            float(
+                towers[target]["load"]
+            ),
 
         "towers":
-            towers,
+            tower_output,
 
         "edges_list":
             edges,
@@ -1017,23 +711,17 @@ def analyse_dataset(file_path):
             astar_cost,
 
         "astar_nodes":
-            astar_nodes,
-
-        "low_threshold":
-            low_threshold,
-
-        "high_threshold":
-            high_threshold
+            astar_nodes
 
     }
 
 
 # ============================================================
-# HOME
+# DASHBOARD
 # ============================================================
 
 @app.route("/")
-def home():
+def dashboard():
 
     return send_from_directory(
         ".",
@@ -1049,21 +737,18 @@ def home():
     "/upload",
     methods=["POST"]
 )
-def upload():
+def upload_dataset():
 
-    global current_results
-
+    global RESULTS
 
     if "dataset" not in request.files:
 
         return jsonify({
             "error":
-                "Please select a CSV dataset."
+                "No dataset uploaded."
         }), 400
 
-
     file = request.files["dataset"]
-
 
     if file.filename == "":
 
@@ -1072,41 +757,40 @@ def upload():
                 "No file selected."
         }), 400
 
-
     if not file.filename.lower().endswith(".csv"):
 
         return jsonify({
             "error":
-                "Only CSV files are supported."
+                "Please upload a CSV file."
         }), 400
 
-
-    path = os.path.join(
+    file_path = os.path.join(
         UPLOAD_FOLDER,
-        "current_dataset.csv"
+        "dataset.csv"
     )
 
-
-    file.save(path)
-
+    file.save(file_path)
 
     try:
 
-        current_results = (
-            analyse_dataset(path)
+        RESULTS = analyse_dataset(
+            file_path
         )
-
 
         return jsonify(
-            current_results
+            RESULTS
         )
 
+    except Exception as error:
 
-    except Exception as e:
+        print(
+            "DATASET ERROR:",
+            error
+        )
 
         return jsonify({
             "error":
-                str(e)
+                str(error)
         }), 500
 
 
@@ -1115,23 +799,34 @@ def upload():
 # ============================================================
 
 @app.route("/api/results")
-def api_results():
+def get_results():
 
-    if current_results is None:
+    if RESULTS is None:
 
         return jsonify({
             "error":
-                "Upload a dataset first."
+                "No dataset has been uploaded yet."
         }), 404
 
-
     return jsonify(
-        current_results
+        RESULTS
     )
 
 
 # ============================================================
-# START
+# HEALTH CHECK
+# ============================================================
+
+@app.route("/health")
+def health():
+
+    return jsonify({
+        "status": "running"
+    })
+
+
+# ============================================================
+# RUN
 # ============================================================
 
 if __name__ == "__main__":
@@ -1143,24 +838,14 @@ if __name__ == "__main__":
         )
     )
 
-
     print(
-        "=============================================="
+        "Telecom Load Balancing Dashboard"
     )
 
     print(
-        " TELECOM LOAD BALANCING DASHBOARD"
-    )
-
-    print(
-        "=============================================="
-    )
-
-    print(
-        "Running on port:",
+        "Server running on port:",
         port
     )
-
 
     app.run(
         host="0.0.0.0",
