@@ -8,6 +8,7 @@
     <title>Telecom Network Load Balancing</title>
 
     <style>
+
         * {
             box-sizing: border-box;
         }
@@ -20,97 +21,73 @@
         }
 
         header {
-            padding: 22px 30px;
+            padding: 25px 35px;
             background: #111827;
             border-bottom: 1px solid #263244;
         }
 
         header h1 {
             margin: 0;
-            font-size: 27px;
+            font-size: 28px;
         }
 
         header p {
             color: #94a3b8;
-            margin-top: 7px;
         }
 
-        .controls {
-            padding: 14px 30px;
-            background: #0f172a;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        button {
-            background: #2563eb;
-            color: white;
-            border: 0;
-            border-radius: 7px;
-            padding: 10px 15px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background: #1d4ed8;
-        }
-
-        input {
-            color: #cbd5e1;
+        .container {
+            padding: 20px;
         }
 
         .stats {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: #111827;
+            border: 1px solid #263244;
+            border-radius: 12px;
             padding: 18px;
         }
 
-        .stat,
+        .card-title {
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        .card-value {
+            font-size: 25px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .main {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
         .panel {
             background: #111827;
             border: 1px solid #263244;
             border-radius: 12px;
+            overflow: hidden;
         }
 
-        .stat {
-            padding: 15px;
-        }
-
-        .small {
-            color: #94a3b8;
-            font-size: 12px;
-        }
-
-        .num {
-            font-size: 24px;
-            font-weight: bold;
-            margin-top: 5px;
-        }
-
-        .layout {
-            display: grid;
-            grid-template-columns: 1fr 320px;
-            gap: 18px;
-            padding: 0 18px 18px;
-        }
-
-        .panel h2 {
-            font-size: 17px;
-            margin: 0;
+        .panel-title {
             padding: 16px;
             border-bottom: 1px solid #263244;
+            font-size: 18px;
+            font-weight: bold;
         }
 
-        .network {
-            background: #0f172a;
-        }
-
-        svg {
+        #network {
             width: 100%;
-            height: 580px;
+            height: 600px;
+            background: #0f172a;
         }
 
         .edge {
@@ -118,9 +95,81 @@
             stroke-width: 3;
         }
 
-        .edge.path {
+        .route {
             stroke: #22c55e;
             stroke-width: 6;
+        }
+
+        .node {
+            cursor: pointer;
+        }
+
+        .node circle {
+            stroke: white;
+            stroke-width: 2;
+        }
+
+        .node:hover circle {
+            stroke: #facc15;
+            stroke-width: 5;
+        }
+
+        .node text {
+            fill: white;
+            text-anchor: middle;
+            font-size: 12px;
+            pointer-events: none;
+        }
+
+        .source {
+            fill: #dc2626;
+        }
+
+        .target {
+            fill: #16a34a;
+        }
+
+        .normal {
+            fill: #2563eb;
+        }
+
+        .details {
+            padding: 20px;
+        }
+
+        .detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 11px 0;
+            border-bottom: 1px solid #263244;
+        }
+
+        .label {
+            color: #94a3b8;
+        }
+
+        .value {
+            font-weight: bold;
+        }
+
+        .buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 11px 16px;
+            border: none;
+            border-radius: 7px;
+            background: #2563eb;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
         }
 
         .shift {
@@ -136,237 +185,301 @@
         }
 
         @keyframes move {
+
             to {
                 stroke-dashoffset: -22;
             }
+
         }
 
-        .node circle {
-            stroke: white;
-            stroke-width: 2;
-            cursor: pointer;
-        }
-
-        .node text {
-            fill: #e5e7eb;
-            font-size: 12px;
-            text-anchor: middle;
-        }
-
-        .normal circle {
-            fill: #2563eb;
-        }
-
-        .source circle {
-            fill: #dc2626;
-        }
-
-        .target circle {
-            fill: #16a34a;
-        }
-
-        .node:hover circle {
-            stroke: #facc15;
-            stroke-width: 4;
-        }
-
-        .details {
-            padding: 18px;
-        }
-
-        .box {
+        .status {
+            margin-top: 15px;
+            padding: 12px;
             background: #0f172a;
-            border: 1px solid #263244;
-            border-radius: 9px;
-            padding: 15px;
-            margin-bottom: 14px;
-        }
-
-        .box h3 {
-            margin-top: 0;
-        }
-
-        .row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #1e293b;
-        }
-
-        .label {
+            border-radius: 8px;
             color: #94a3b8;
         }
 
-        .value {
-            font-weight: bold;
-        }
-
         table {
-            width: calc(100% - 36px);
-            margin: 0 18px 18px;
+            width: 100%;
             border-collapse: collapse;
         }
 
         th,
         td {
-            padding: 11px;
-            border-bottom: 1px solid #263244;
+            padding: 12px;
             text-align: center;
+            border-bottom: 1px solid #263244;
         }
 
         th {
             color: #94a3b8;
         }
 
-        @media (max-width: 850px) {
-            .layout {
-                grid-template-columns: 1fr;
-            }
+        @media(max-width:900px) {
 
             .stats {
                 grid-template-columns: 1fr 1fr;
             }
+
+            .main {
+                grid-template-columns: 1fr;
+            }
+
         }
+
     </style>
+
 </head>
 
 
 <body>
 
-    <header>
 
-        <h1>Telecom Network Load Balancing</h1>
+<header>
 
-        <p>
-            Interactive Tower View • Congestion Detection • User Shifting • Dijkstra vs A*
-        </p>
+    <h1>
+        Telecom Network Load Balancing
+    </h1>
 
-    </header>
+    <p>
+        Python-Based Load Analysis • Congestion Detection • Dijkstra • A*
+    </p>
 
-
-    <div class="controls">
-
-        <input id="file" type="file" accept=".csv">
-
-        <button onclick="loadCSV()">
-            Load Cleaned Dataset
-        </button>
-
-        <button onclick="demo()">
-            Use Demo Data
-        </button>
-
-        <button onclick="shift()">
-            ▶ Simulate User Shifting
-        </button>
-
-        <span id="msg" style="color:#94a3b8"></span>
-
-    </div>
+</header>
 
 
-    <!-- SUMMARY CARDS -->
+<div class="container">
+
+
+    <!-- SUMMARY -->
 
     <div class="stats">
 
-        <div class="stat">
-            <div class="small">Dataset Records</div>
-            <div class="num" id="records">147,470</div>
+        <div class="card">
+
+            <div class="card-title">
+                Dataset Records
+            </div>
+
+            <div class="card-value" id="records">
+                Loading...
+            </div>
+
         </div>
 
-        <div class="stat">
-            <div class="small">Base Stations</div>
-            <div class="num" id="towerCount">24</div>
+
+        <div class="card">
+
+            <div class="card-title">
+                Base Stations
+            </div>
+
+            <div class="card-value" id="stations">
+                Loading...
+            </div>
+
         </div>
 
-        <div class="stat">
-            <div class="small">Active Users</div>
-            <div class="num" id="userCount">—</div>
+
+        <div class="card">
+
+            <div class="card-title">
+                Network Sectors
+            </div>
+
+            <div class="card-value" id="sectors">
+                Loading...
+            </div>
+
         </div>
 
-        <div class="stat">
-            <div class="small">Congested Tower</div>
-            <div class="num" id="busy">Site 196</div>
+
+        <div class="card">
+
+            <div class="card-title">
+                Congested Sector
+            </div>
+
+            <div class="card-value" id="congested">
+                Loading...
+            </div>
+
         </div>
 
     </div>
 
 
-    <div class="layout">
+
+    <div class="main">
 
 
         <!-- NETWORK -->
 
         <div class="panel">
 
-            <h2>
-                Network Topology — Click a Tower
-            </h2>
-
-            <div class="network">
-
-                <svg id="svg" viewBox="0 0 900 580"></svg>
-
+            <div class="panel-title">
+                Network Topology
             </div>
 
+            <svg
+                id="network"
+                viewBox="0 0 900 600">
+            </svg>
+
         </div>
+
 
 
         <!-- DETAILS -->
 
         <div class="panel">
 
-            <h2>
-                Tower Details
-            </h2>
+            <div class="panel-title">
+                Sector Details
+            </div>
+
 
             <div class="details">
 
-                <div class="box" id="details">
+                <div class="detail">
 
-                    <h3>Click a node</h3>
+                    <span class="label">
+                        Selected Sector
+                    </span>
 
-                    <p style="color:#94a3b8">
-                        Select a tower to see its users
-                        and network measurements.
-                    </p>
-
-                </div>
-
-
-                <div class="box">
-
-                    <h3>Load Balancing Route</h3>
-
-                    <div class="row">
-                        <span class="label">Source</span>
-                        <span class="value">Site 196-3</span>
-                    </div>
-
-                    <div class="row">
-                        <span class="label">Target</span>
-                        <span class="value">Site 159-1</span>
-                    </div>
-
-                    <div class="row">
-                        <span class="label">Path Cost</span>
-                        <span class="value">7</span>
-                    </div>
+                    <span
+                        class="value"
+                        id="selected">
+                        —
+                    </span>
 
                 </div>
 
 
-                <div class="box">
+                <div class="detail">
 
-                    <h3>User Shifting</h3>
+                    <span class="label">
+                        Load Score
+                    </span>
 
-                    <p id="shiftText" style="color:#94a3b8">
+                    <span
+                        class="value"
+                        id="load">
+                        —
+                    </span>
 
-                        Press the button to visualize users
-                        moving from the congested source
-                        toward the lower-load target.
+                </div>
 
-                    </p>
+
+                <div class="detail">
+
+                    <span class="label">
+                        Load Status
+                    </span>
+
+                    <span
+                        class="value"
+                        id="status">
+                        —
+                    </span>
+
+                </div>
+
+
+                <div class="detail">
+
+                    <span class="label">
+                        Source
+                    </span>
+
+                    <span
+                        class="value"
+                        id="source">
+                        —
+                    </span>
+
+                </div>
+
+
+                <div class="detail">
+
+                    <span class="label">
+                        Target
+                    </span>
+
+                    <span
+                        class="value"
+                        id="target">
+                        —
+                    </span>
+
+                </div>
+
+
+                <div class="detail">
+
+                    <span class="label">
+                        Target Load
+                    </span>
+
+                    <span
+                        class="value"
+                        id="targetLoad">
+                        —
+                    </span>
+
+                </div>
+
+
+                <div class="detail">
+
+                    <span class="label">
+                        Network Nodes
+                    </span>
+
+                    <span
+                        class="value"
+                        id="nodes">
+                        —
+                    </span>
+
+                </div>
+
+
+                <div class="detail">
+
+                    <span class="label">
+                        Network Connections
+                    </span>
+
+                    <span
+                        class="value"
+                        id="edges">
+                        —
+                    </span>
+
+                </div>
+
+
+                <div class="buttons">
+
+                    <button onclick="simulateShift()">
+                        ▶ Simulate User Shifting
+                    </button>
+
+                    <button onclick="loadResults()">
+                        ↻ Refresh Results
+                    </button>
+
+                </div>
+
+
+                <div
+                    class="status"
+                    id="message">
+
+                    Connecting to Python...
 
                 </div>
 
@@ -377,432 +490,360 @@
     </div>
 
 
+
     <!-- ALGORITHM COMPARISON -->
 
-    <div class="panel">
+    <div
+        class="panel"
+        style="margin-top:20px;">
 
-        <h2>
+        <div class="panel-title">
             Dijkstra vs A*
-        </h2>
+        </div>
 
-        <table>
 
-            <tr>
-                <th>Metric</th>
-                <th>Dijkstra</th>
-                <th>A*</th>
-            </tr>
+        <div style="padding:20px">
 
-            <tr>
-                <td>Path Cost</td>
-                <td>7</td>
-                <td>7</td>
-            </tr>
+            <table>
 
-            <tr>
-                <td>Nodes Explored</td>
-                <td>18</td>
-                <td>18</td>
-            </tr>
+                <tr>
 
-        </table>
+                    <th>
+                        Metric
+                    </th>
+
+                    <th>
+                        Dijkstra
+                    </th>
+
+                    <th>
+                        A*
+                    </th>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        Path Cost
+                    </td>
+
+                    <td id="dijkstraCost">
+                        —
+                    </td>
+
+                    <td id="astarCost">
+                        —
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        Nodes Explored
+                    </td>
+
+                    <td id="dijkstraNodes">
+                        —
+                    </td>
+
+                    <td id="astarNodes">
+                        —
+                    </td>
+
+                </tr>
+
+            </table>
+
+
+            <div
+                class="status"
+                id="comparison">
+
+                Waiting for Python results...
+
+            </div>
+
+        </div>
 
     </div>
 
 
+</div>
+
+
+
 <script>
 
-    /*
-        PATH FOUND IN OUR PROJECT
-    */
 
-    const path = [
+let results = null;
 
-        "Site 196-3",
-        "Site 196-1",
-        "Site 182-1",
-        "Site 172-1",
-        "Site 159-1"
 
-    ];
+/*
+    GET RESULTS FROM PYTHON
+*/
 
+async function loadResults() {
 
-    /*
-        POSITION OF EACH NODE
-    */
+    document.getElementById(
+        "message"
+    ).innerText =
+        "Running Python analysis...";
 
-    const pos = {
 
-        "Site 196-3": [110, 290],
+    try {
 
-        "Site 196-1": [290, 150],
+        const response =
+            await fetch("/api/results");
 
-        "Site 182-1": [450, 290],
 
-        "Site 172-1": [610, 150],
+        if (!response.ok) {
 
-        "Site 159-1": [790, 290]
-
-    };
-
-
-    let towers = {};
-
-    let nodeToTower = {};
-
-
-    /*
-        DEMO DATA
-    */
-
-    function demo() {
-
-        towers = {
-
-            "Site 196": {
-
-                users: 420,
-
-                rb: 91,
-
-                cqi: 8.2,
-
-                dl: 680,
-
-                ul: 95,
-
-                status: "Congested"
-
-            },
-
-
-            "Site 196-1": {
-
-                users: 350,
-
-                rb: 72,
-
-                cqi: 10.1,
-
-                dl: 520,
-
-                ul: 75,
-
-                status: "High"
-
-            },
-
-
-            "Site 182": {
-
-                users: 210,
-
-                rb: 48,
-
-                cqi: 12.4,
-
-                dl: 310,
-
-                ul: 50,
-
-                status: "Moderate"
-
-            },
-
-
-            "Site 172": {
-
-                users: 165,
-
-                rb: 39,
-
-                cqi: 13.1,
-
-                dl: 240,
-
-                ul: 38,
-
-                status: "Low"
-
-            },
-
-
-            "Site 159": {
-
-                users: 95,
-
-                rb: 22,
-
-                cqi: 14.2,
-
-                dl: 150,
-
-                ul: 25,
-
-                status: "Low"
-
-            }
-
-        };
-
-
-        nodeToTower = {
-
-            "Site 196-3": "Site 196",
-
-            "Site 196-1": "Site 196-1",
-
-            "Site 182-1": "Site 182",
-
-            "Site 172-1": "Site 172",
-
-            "Site 159-1": "Site 159"
-
-        };
-
-
-        draw();
-
-        show("Site 196");
-
-        document.getElementById("msg").textContent =
-            "Demo data loaded. Click any tower.";
-
-
-    }
-
-
-    /*
-        DRAW NETWORK
-    */
-
-    function draw() {
-
-        const svg = document.getElementById("svg");
-
-        svg.innerHTML = "";
-
-
-        /*
-            Draw edges
-        */
-
-        for (let i = 0; i < path.length - 1; i++) {
-
-            let a = pos[path[i]];
-
-            let b = pos[path[i + 1]];
-
-            let line = createLine(
-
-                a,
-                b,
-                "edge path"
-
+            throw new Error(
+                "Python backend not available"
             );
-
-            svg.appendChild(line);
 
         }
 
 
-        /*
-            User shifting animation
-        */
+        results =
+            await response.json();
 
-        let shiftLine = createLine(
 
-            pos[path[0]],
+        displayResults();
 
-            pos[path[4]],
 
-            "shift"
+    }
 
+    catch (error) {
+
+        document.getElementById(
+            "message"
+        ).innerText =
+            "Could not connect to midsem_demo.py";
+
+        console.error(error);
+
+    }
+
+}
+
+
+/*
+    DISPLAY PYTHON RESULTS
+*/
+
+function displayResults() {
+
+    document.getElementById(
+        "records"
+    ).innerText =
+        results.dataset_records;
+
+
+    document.getElementById(
+        "stations"
+    ).innerText =
+        results.base_stations;
+
+
+    document.getElementById(
+        "sectors"
+    ).innerText =
+        results.sectors;
+
+
+    document.getElementById(
+        "congested"
+    ).innerText =
+        results.source;
+
+
+    document.getElementById(
+        "source"
+    ).innerText =
+        results.source;
+
+
+    document.getElementById(
+        "target"
+    ).innerText =
+        results.target;
+
+
+    document.getElementById(
+        "targetLoad"
+    ).innerText =
+        results.target_load.toFixed(6);
+
+
+    document.getElementById(
+        "nodes"
+    ).innerText =
+        results.network_nodes;
+
+
+    document.getElementById(
+        "edges"
+    ).innerText =
+        results.network_edges;
+
+
+    document.getElementById(
+        "dijkstraCost"
+    ).innerText =
+        results.dijkstra_cost;
+
+
+    document.getElementById(
+        "astarCost"
+    ).innerText =
+        results.astar_cost;
+
+
+    document.getElementById(
+        "dijkstraNodes"
+    ).innerText =
+        results.dijkstra_nodes;
+
+
+    document.getElementById(
+        "astarNodes"
+    ).innerText =
+        results.astar_nodes;
+
+
+    if (
+        results.astar_nodes <
+        results.dijkstra_nodes
+    ) {
+
+        document.getElementById(
+            "comparison"
+        ).innerText =
+            "A* explored fewer nodes.";
+
+    }
+
+    else if (
+        results.astar_nodes ===
+        results.dijkstra_nodes
+    ) {
+
+        document.getElementById(
+            "comparison"
+        ).innerText =
+            "Both algorithms explored the same number of nodes.";
+
+    }
+
+    else {
+
+        document.getElementById(
+            "comparison"
+        ).innerText =
+            "Dijkstra explored fewer nodes.";
+
+    }
+
+
+    document.getElementById(
+        "message"
+    ).innerText =
+        "Python analysis loaded successfully.";
+
+
+    drawNetwork();
+
+}
+
+
+/*
+    DRAW PATH
+*/
+
+function drawNetwork() {
+
+    const svg =
+        document.getElementById(
+            "network"
         );
 
-        shiftLine.id = "shiftLine";
 
-        svg.appendChild(shiftLine);
-
-
-        /*
-            Draw nodes
-        */
-
-        path.forEach((name, index) => {
-
-            let [x, y] = pos[name];
+    svg.innerHTML = "";
 
 
-            let group =
-                document.createElementNS(
-                    "http://www.w3.org/2000/svg",
-                    "g"
-                );
+    const path =
+        results.astar_path;
 
 
-            if (index === 0) {
+    if (
+        !path ||
+        path.length === 0
+    ) {
 
-                group.setAttribute(
-                    "class",
-                    "node source"
-                );
-
-            }
-
-            else if (index === path.length - 1) {
-
-                group.setAttribute(
-                    "class",
-                    "node target"
-                );
-
-            }
-
-            else {
-
-                group.setAttribute(
-                    "class",
-                    "node normal"
-                );
-
-            }
-
-
-            /*
-                Node size based on users
-            */
-
-            let towerName =
-                nodeToTower[name] || name;
-
-            let users =
-                towers[towerName]?.users || 100;
-
-
-            let radius =
-                Math.max(
-                    25,
-                    Math.min(50, 20 + users / 15)
-                );
-
-
-            let circle =
-                document.createElementNS(
-                    "http://www.w3.org/2000/svg",
-                    "circle"
-                );
-
-
-            circle.setAttribute(
-                "cx",
-                x
-            );
-
-            circle.setAttribute(
-                "cy",
-                y
-            );
-
-            circle.setAttribute(
-                "r",
-                radius
-            );
-
-
-            group.appendChild(circle);
-
-
-            /*
-                Tower label
-            */
-
-            let text =
-                document.createElementNS(
-                    "http://www.w3.org/2000/svg",
-                    "text"
-                );
-
-
-            text.setAttribute(
-                "x",
-                x
-            );
-
-            text.setAttribute(
-                "y",
-                y + radius + 22
-            );
-
-            text.textContent = name;
-
-
-            group.appendChild(text);
-
-
-            /*
-                User count
-            */
-
-            let userText =
-                document.createElementNS(
-                    "http://www.w3.org/2000/svg",
-                    "text"
-                );
-
-
-            userText.setAttribute(
-                "x",
-                x
-            );
-
-            userText.setAttribute(
-                "y",
-                y + 5
-            );
-
-            userText.setAttribute(
-                "font-size",
-                "13"
-            );
-
-            userText.setAttribute(
-                "font-weight",
-                "bold"
-            );
-
-            userText.textContent =
-                users + " users";
-
-
-            group.appendChild(userText);
-
-
-            /*
-                Click node
-            */
-
-            group.onclick = function () {
-
-                show(towerName);
-
-            };
-
-
-            svg.appendChild(group);
-
-        });
+        return;
 
     }
 
 
     /*
-        CREATE EDGE
+        Automatically position nodes
     */
 
-    function createLine(a, b, className) {
+    const positions = {};
 
-        let line =
+    const startX = 100;
+
+    const endX = 800;
+
+    const step =
+        (endX - startX) /
+        Math.max(
+            path.length - 1,
+            1
+        );
+
+
+    path.forEach(
+        (node, index) => {
+
+            positions[node] = [
+
+                startX +
+                index * step,
+
+                index % 2 === 0
+                    ? 350
+                    : 220
+
+            ];
+
+        }
+    );
+
+
+    /*
+        Draw connections
+    */
+
+    for (
+        let i = 0;
+        i < path.length - 1;
+        i++
+    ) {
+
+        const a =
+            positions[path[i]];
+
+        const b =
+            positions[path[i + 1]];
+
+
+        const line =
             document.createElementNS(
                 "http://www.w3.org/2000/svg",
                 "line"
@@ -829,607 +870,348 @@
             b[1]
         );
 
+
         line.setAttribute(
             "class",
-            className
+            "edge route"
         );
 
 
-        return line;
+        svg.appendChild(line);
 
     }
 
 
     /*
-        SHOW TOWER DETAILS
+        User shifting line
     */
 
-    function show(name) {
+    const first =
+        positions[path[0]];
 
-        let d = towers[name] || {};
-
-
-        document.getElementById(
-            "details"
-        ).innerHTML = `
-
-            <h3>${name}</h3>
-
-            <div class="row">
-
-                <span class="label">
-                    Active Users
-                </span>
-
-                <span class="value">
-                    ${d.users ?? "—"}
-                </span>
-
-            </div>
+    const last =
+        positions[
+            path[path.length - 1]
+        ];
 
 
-            <div class="row">
-
-                <span class="label">
-                    RB Utilization
-                </span>
-
-                <span class="value">
-                    ${d.rb ?? "—"}%
-                </span>
-
-            </div>
+    const shift =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "line"
+        );
 
 
-            <div class="row">
+    shift.setAttribute(
+        "x1",
+        first[0]
+    );
 
-                <span class="label">
-                    CQI
-                </span>
+    shift.setAttribute(
+        "y1",
+        first[1]
+    );
 
-                <span class="value">
-                    ${d.cqi ?? "—"}
-                </span>
+    shift.setAttribute(
+        "x2",
+        last[0]
+    );
 
-            </div>
-
-
-            <div class="row">
-
-                <span class="label">
-                    DL Data
-                </span>
-
-                <span class="value">
-                    ${d.dl ?? "—"} GB
-                </span>
-
-            </div>
+    shift.setAttribute(
+        "y2",
+        last[1]
+    );
 
 
-            <div class="row">
-
-                <span class="label">
-                    UL Data
-                </span>
-
-                <span class="value">
-                    ${d.ul ?? "—"} GB
-                </span>
-
-            </div>
+    shift.setAttribute(
+        "class",
+        "shift"
+    );
 
 
-            <div class="row">
+    shift.id =
+        "shiftLine";
 
-                <span class="label">
-                    Status
-                </span>
 
-                <span class="value">
-                    ${d.status ?? "—"}
-                </span>
-
-            </div>
-
-        `;
-
-    }
+    svg.appendChild(
+        shift
+    );
 
 
     /*
-        SIMULATE USER SHIFTING
+        Draw nodes
     */
 
-    function shift() {
+    path.forEach(
+        (node, index) => {
 
-        let line =
-            document.getElementById(
-                "shiftLine"
-            );
+            const [x, y] =
+                positions[node];
 
 
-        line.classList.add("active");
-
-
-        document.getElementById(
-            "shiftText"
-        ).innerHTML = `
-
-            <b>Users shifting...</b>
-
-            <br>
-
-            Congested tower
-
-            →
-
-            Optimized path
-
-            →
-
-            Lower-load tower
-
-        `;
-
-
-        setTimeout(function () {
-
-            line.classList.remove("active");
-
-
-            document.getElementById(
-                "shiftText"
-            ).innerHTML = `
-
-                <b>Shift completed.</b>
-
-                <br>
-
-                The visualization represents
-                the load-balancing decision.
-
-            `;
-
-        }, 4500);
-
-    }
-
-
-    /*
-        LOAD CLEANED CSV
-    */
-
-    function loadCSV() {
-
-        const file =
-            document.getElementById(
-                "file"
-            ).files[0];
-
-
-        if (!file) {
-
-            document.getElementById(
-                "msg"
-            ).textContent =
-                "Select FAI_DATASET_CLEANED.csv first.";
-
-            return;
-
-        }
-
-
-        const reader =
-            new FileReader();
-
-
-        reader.onload = function (e) {
-
-            const lines =
-                e.target.result
-                .split(/\r?\n/)
-                .filter(x => x.trim());
-
-
-            const header =
-                parseCSV(lines[0]);
-
-
-            let index = {};
-
-
-            header.forEach(
-                (x, i) => {
-                    index[x.trim()] = i;
-                }
-            );
-
-
-            if (
-                index["Base station"]
-                === undefined
-            ) {
-
-                document.getElementById(
-                    "msg"
-                ).textContent =
-                    "Base station column not found.";
-
-                return;
-
-            }
-
-
-            let temp = {};
-
-
-            /*
-                Calculate tower values
-            */
-
-            for (
-                let i = 1;
-                i < lines.length;
-                i++
-            ) {
-
-                let row =
-                    parseCSV(lines[i]);
-
-
-                let base =
-                    row[index["Base station"]];
-
-
-                if (!base) continue;
-
-
-                if (!temp[base]) {
-
-                    temp[base] = {
-
-                        count: 0,
-
-                        users: 0,
-
-                        rb: 0,
-
-                        cqi: 0,
-
-                        dl: 0,
-
-                        ul: 0
-
-                    };
-
-                }
-
-
-                let d = temp[base];
-
-
-                d.count++;
-
-
-                d.users +=
-
-                    number(
-                        row[
-                            index[
-                                "4G active users DL"
-                            ]
-                        ]
-                    )
-
-                    +
-
-                    number(
-                        row[
-                            index[
-                                "4G active users UL"
-                            ]
-                        ]
-                    );
-
-
-                d.rb +=
-
-                    number(
-                        row[
-                            index[
-                                "4G RB utilization"
-                            ]
-                        ]
-                    );
-
-
-                d.cqi +=
-
-                    number(
-                        row[
-                            index[
-                                "4G CQI rank 1"
-                            ]
-                        ]
-                    );
-
-
-                d.dl +=
-
-                    number(
-                        row[
-                            index[
-                                "4G data volume DL"
-                            ]
-                        ]
-                    );
-
-
-                d.ul +=
-
-                    number(
-                        row[
-                            index[
-                                "4G data volume UL"
-                            ]
-                        ]
-                    );
-
-            }
-
-
-            towers = {};
-
-
-            Object.keys(temp).forEach(
-                function (base) {
-
-                    let d =
-                        temp[base];
-
-
-                    towers[base] = {
-
-                        users:
-                            Math.round(
-                                d.users /
-                                d.count
-                            ),
-
-                        rb:
-                            (
-                                d.rb /
-                                d.count
-                            ).toFixed(1),
-
-                        cqi:
-                            (
-                                d.cqi /
-                                d.count
-                            ).toFixed(1),
-
-                        dl:
-                            (
-                                d.dl /
-                                d.count
-                            ).toFixed(1),
-
-                        ul:
-                            (
-                                d.ul /
-                                d.count
-                            ).toFixed(1),
-
-                        status:
-                            getStatus(
-                                d.rb /
-                                d.count
-                            )
-
-                    };
-
-                }
-            );
-
-
-            /*
-                Update summary
-            */
-
-            document.getElementById(
-                "records"
-            ).textContent =
-                (
-                    lines.length - 1
-                ).toLocaleString();
-
-
-            document.getElementById(
-                "towerCount"
-            ).textContent =
-                Object.keys(
-                    towers
-                ).length;
-
-
-            let totalUsers =
-                Object.values(
-                    towers
-                ).reduce(
-                    (sum, d) =>
-                        sum +
-                        Number(
-                            d.users
-                        ),
-                    0
+            const group =
+                document.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    "g"
                 );
 
 
-            document.getElementById(
-                "userCount"
-            ).textContent =
-                totalUsers.toLocaleString();
+            group.setAttribute(
+                "class",
+                "node"
+            );
 
 
             /*
-                Find most loaded tower
+                Node type
             */
 
-            let maxTower =
-                Object.keys(
-                    towers
-                ).sort(
-                    (a, b) =>
-                        Number(
-                            towers[b].rb
-                        )
-                        -
-                        Number(
-                            towers[a].rb
-                        )
-                )[0];
+            let nodeClass =
+                "normal";
 
 
-            document.getElementById(
-                "busy"
-            ).textContent =
-                maxTower || "—";
+            if (index === 0) {
 
-
-            document.getElementById(
-                "msg"
-            ).textContent =
-                "Actual cleaned dataset loaded.";
-
-
-            /*
-                Redraw nodes using
-                actual user values
-            */
-
-            draw();
-
-
-            if (maxTower) {
-
-                show(maxTower);
-
-            }
-
-        };
-
-
-        reader.readAsText(file);
-
-    }
-
-
-    /*
-        NUMBER CONVERSION
-    */
-
-    function number(value) {
-
-        let n =
-            parseFloat(value);
-
-
-        return isNaN(n)
-            ? 0
-            : n;
-
-    }
-
-
-    /*
-        LOAD STATUS
-    */
-
-    function getStatus(value) {
-
-        if (value < 30)
-            return "Low";
-
-        if (value < 60)
-            return "Moderate";
-
-        if (value < 80)
-            return "High";
-
-        return "Congested";
-
-    }
-
-
-    /*
-        SIMPLE CSV READER
-    */
-
-    function parseCSV(line) {
-
-        let result = [];
-
-        let current = "";
-
-        let quote = false;
-
-
-        for (
-            let i = 0;
-            i < line.length;
-            i++
-        ) {
-
-            let c = line[i];
-
-
-            if (c === '"') {
-
-                quote = !quote;
+                nodeClass =
+                    "source";
 
             }
 
             else if (
-                c === ","
-                &&
-                !quote
+                index ===
+                path.length - 1
             ) {
 
-                result.push(
-                    current
+                nodeClass =
+                    "target";
+
+            }
+
+
+            /*
+                Circle
+            */
+
+            const circle =
+                document.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    "circle"
                 );
 
-                current = "";
 
-            }
+            circle.setAttribute(
+                "cx",
+                x
+            );
 
-            else {
+            circle.setAttribute(
+                "cy",
+                y
+            );
 
-                current += c;
+            circle.setAttribute(
+                "r",
+                32
+            );
 
-            }
+
+            circle.setAttribute(
+                "class",
+                nodeClass
+            );
+
+
+            group.appendChild(
+                circle
+            );
+
+
+            /*
+                Node name
+            */
+
+            const text =
+                document.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    "text"
+                );
+
+
+            text.setAttribute(
+                "x",
+                x
+            );
+
+            text.setAttribute(
+                "y",
+                y + 55
+            );
+
+
+            text.textContent =
+                node;
+
+
+            group.appendChild(
+                text
+            );
+
+
+            /*
+                Click node
+            */
+
+            group.onclick =
+                function () {
+
+                    showNode(node);
+
+                };
+
+
+            svg.appendChild(
+                group
+            );
+
+        }
+    );
+
+}
+
+
+/*
+    SHOW NODE
+*/
+
+function showNode(node) {
+
+    document.getElementById(
+        "selected"
+    ).innerText =
+        node;
+
+
+    if (
+        results.node_loads &&
+        results.node_loads[node]
+        !== undefined
+    ) {
+
+        const load =
+            results.node_loads[node];
+
+
+        document.getElementById(
+            "load"
+        ).innerText =
+            Number(load).toFixed(6);
+
+
+        let status =
+            "Low";
+
+
+        if (
+            load >
+            results.high_threshold
+        ) {
+
+            status =
+                "High";
+
+        }
+
+        else if (
+            load >
+            results.low_threshold
+        ) {
+
+            status =
+                "Moderate";
 
         }
 
 
-        result.push(
-            current
-        );
+        document.getElementById(
+            "status"
+        ).innerText =
+            status;
+
+    }
+
+}
 
 
-        return result;
+/*
+    USER SHIFTING
+*/
+
+function simulateShift() {
+
+    if (!results) {
+
+        return;
 
     }
 
 
-    /*
-        START WITH DEMO
-    */
+    const line =
+        document.getElementById(
+            "shiftLine"
+        );
 
-    demo();
+
+    if (!line) {
+
+        return;
+
+    }
+
+
+    line.classList.add(
+        "active"
+    );
+
+
+    document.getElementById(
+        "message"
+    ).innerText =
+        "Users are being shifted from " +
+        results.source +
+        " toward " +
+        results.target +
+        " using the optimized path.";
+
+
+    setTimeout(
+        function () {
+
+            line.classList.remove(
+                "active"
+            );
+
+
+            document.getElementById(
+                "message"
+            ).innerText =
+                "Load-balancing path completed.";
+
+        },
+        5000
+    );
+
+}
+
+
+/*
+    LOAD WHEN PAGE OPENS
+*/
+
+loadResults();
+
 
 </script>
+
 
 </body>
 
