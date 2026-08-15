@@ -2,239 +2,649 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Telecom Network Load Balancing</title>
+<meta charset="UTF-8">
 
-    <style>
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-        * {
-            box-sizing: border-box;
-        }
+<title>Telecom Network Load Balancing</title>
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #0b1220;
-            color: #e5e7eb;
-        }
 
-        header {
-            padding: 25px 35px;
-            background: #111827;
-            border-bottom: 1px solid #263244;
-        }
+<style>
 
-        header h1 {
-            margin: 0;
-            font-size: 28px;
-        }
+/* ============================================================
+   BASIC
+============================================================ */
 
-        header p {
-            color: #94a3b8;
-        }
+* {
+    box-sizing: border-box;
+}
 
-        .container {
-            padding: 20px;
-        }
+body {
 
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
+    margin: 0;
 
-        .card {
-            background: #111827;
-            border: 1px solid #263244;
-            border-radius: 12px;
-            padding: 18px;
-        }
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
 
-        .card-title {
-            color: #94a3b8;
-            font-size: 13px;
-        }
+    background: #0b1220;
 
-        .card-value {
-            font-size: 25px;
-            font-weight: bold;
-            margin-top: 8px;
-        }
+    color: #f8fafc;
+}
 
-        .main {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-        }
 
-        .panel {
-            background: #111827;
-            border: 1px solid #263244;
-            border-radius: 12px;
-            overflow: hidden;
-        }
+/* ============================================================
+   HEADER
+============================================================ */
 
-        .panel-title {
-            padding: 16px;
-            border-bottom: 1px solid #263244;
-            font-size: 18px;
-            font-weight: bold;
-        }
+header {
 
-        #network {
-            width: 100%;
-            height: 600px;
-            background: #0f172a;
-        }
+    padding: 28px 35px;
 
-        .edge {
-            stroke: #475569;
-            stroke-width: 3;
-        }
+    background: #111827;
 
-        .route {
-            stroke: #22c55e;
-            stroke-width: 6;
-        }
+    border-bottom: 1px solid #263244;
+}
 
-        .node {
-            cursor: pointer;
-        }
+header h1 {
 
-        .node circle {
-            stroke: white;
-            stroke-width: 2;
-        }
+    margin: 0;
 
-        .node:hover circle {
-            stroke: #facc15;
-            stroke-width: 5;
-        }
+    font-size: 30px;
+}
 
-        .node text {
-            fill: white;
-            text-anchor: middle;
-            font-size: 12px;
-            pointer-events: none;
-        }
+header p {
 
-        .source {
-            fill: #dc2626;
-        }
+    margin-top: 8px;
 
-        .target {
-            fill: #16a34a;
-        }
+    color: #94a3b8;
 
-        .normal {
-            fill: #2563eb;
-        }
+}
 
-        .details {
-            padding: 20px;
-        }
 
-        .detail {
-            display: flex;
-            justify-content: space-between;
-            padding: 11px 0;
-            border-bottom: 1px solid #263244;
-        }
+/* ============================================================
+   MAIN
+============================================================ */
 
-        .label {
-            color: #94a3b8;
-        }
+.container {
 
-        .value {
-            font-weight: bold;
-        }
+    padding: 22px;
 
-        .buttons {
-            margin-top: 20px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+    max-width: 1600px;
 
-        button {
-            padding: 11px 16px;
-            border: none;
-            border-radius: 7px;
-            background: #2563eb;
-            color: white;
-            cursor: pointer;
-        }
+    margin: auto;
+}
 
-        button:hover {
-            background: #1d4ed8;
-        }
 
-        .shift {
-            stroke: #f59e0b;
-            stroke-width: 7;
-            stroke-dasharray: 12 10;
-            opacity: 0;
-        }
+/* ============================================================
+   STATUS
+============================================================ */
 
-        .shift.active {
-            opacity: 1;
-            animation: move 0.7s linear infinite;
-        }
+.status-bar {
 
-        @keyframes move {
+    padding: 15px 20px;
 
-            to {
-                stroke-dashoffset: -22;
-            }
+    background: #111827;
 
-        }
+    border: 1px solid #263244;
 
-        .status {
-            margin-top: 15px;
-            padding: 12px;
-            background: #0f172a;
-            border-radius: 8px;
-            color: #94a3b8;
-        }
+    border-radius: 10px;
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+    margin-bottom: 20px;
 
-        th,
-        td {
-            padding: 12px;
-            text-align: center;
-            border-bottom: 1px solid #263244;
-        }
+    color: #94a3b8;
+}
 
-        th {
-            color: #94a3b8;
-        }
+.status-ok {
 
-        @media(max-width:900px) {
+    color: #4ade80;
 
-            .stats {
-                grid-template-columns: 1fr 1fr;
-            }
+    font-weight: bold;
+}
 
-            .main {
-                grid-template-columns: 1fr;
-            }
 
-        }
+/* ============================================================
+   SUMMARY CARDS
+============================================================ */
 
-    </style>
+.cards {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, 1fr);
+
+    gap: 15px;
+
+    margin-bottom: 20px;
+}
+
+.card {
+
+    background: #111827;
+
+    border: 1px solid #263244;
+
+    border-radius: 12px;
+
+    padding: 18px;
+}
+
+.card-title {
+
+    color: #94a3b8;
+
+    font-size: 14px;
+}
+
+.card-value {
+
+    margin-top: 8px;
+
+    font-size: 25px;
+
+    font-weight: bold;
+}
+
+
+/* ============================================================
+   MAIN GRID
+============================================================ */
+
+.main-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        2.1fr 1fr;
+
+    gap: 20px;
+}
+
+
+/* ============================================================
+   PANEL
+============================================================ */
+
+.panel {
+
+    background: #111827;
+
+    border: 1px solid #263244;
+
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    margin-bottom: 20px;
+}
+
+.panel-title {
+
+    padding: 17px 20px;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    border-bottom: 1px solid #263244;
+}
+
+
+/* ============================================================
+   NETWORK
+============================================================ */
+
+.network-wrapper {
+
+    position: relative;
+
+    background: #0f172a;
+}
+
+#network {
+
+    width: 100%;
+
+    height: 650px;
+
+    display: block;
+}
+
+
+/* ============================================================
+   EDGES
+============================================================ */
+
+.edge {
+
+    stroke: #334155;
+
+    stroke-width: 2;
+
+    opacity: 0.8;
+}
+
+.route-edge {
+
+    stroke: #22c55e;
+
+    stroke-width: 6;
+
+    stroke-linecap: round;
+}
+
+
+/* ============================================================
+   NODES
+============================================================ */
+
+.node {
+
+    cursor: pointer;
+}
+
+.node-circle {
+
+    stroke: #e2e8f0;
+
+    stroke-width: 2;
+
+    transition:
+        transform 0.2s,
+        stroke-width 0.2s;
+}
+
+.node:hover .node-circle {
+
+    stroke: #facc15;
+
+    stroke-width: 5;
+}
+
+.node-label {
+
+    fill: #f8fafc;
+
+    font-size: 11px;
+
+    text-anchor: middle;
+
+    pointer-events: none;
+}
+
+.user-label {
+
+    fill: white;
+
+    font-size: 10px;
+
+    text-anchor: middle;
+
+    font-weight: bold;
+
+    pointer-events: none;
+}
+
+
+/* ============================================================
+   NODE COLORS
+============================================================ */
+
+.normal-node {
+
+    fill: #2563eb;
+}
+
+.high-node {
+
+    fill: #f97316;
+}
+
+.source-node {
+
+    fill: #dc2626;
+}
+
+.target-node {
+
+    fill: #16a34a;
+}
+
+
+/* ============================================================
+   USER ANIMATION
+============================================================ */
+
+.user-dot {
+
+    fill: #facc15;
+
+    stroke: white;
+
+    stroke-width: 1;
+}
+
+
+/* ============================================================
+   DETAILS
+============================================================ */
+
+.details {
+
+    padding: 20px;
+}
+
+.detail-row {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    padding: 13px 0;
+
+    border-bottom:
+        1px solid #263244;
+}
+
+.detail-label {
+
+    color: #94a3b8;
+}
+
+.detail-value {
+
+    font-weight: bold;
+}
+
+
+/* ============================================================
+   BUTTONS
+============================================================ */
+
+.buttons {
+
+    margin-top: 20px;
+
+    display: flex;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+}
+
+button {
+
+    padding: 12px 17px;
+
+    border: none;
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+    color: white;
+
+    background: #2563eb;
+}
+
+button:hover {
+
+    background: #1d4ed8;
+}
+
+button:disabled {
+
+    background: #475569;
+
+    cursor: not-allowed;
+}
+
+.reset {
+
+    background: #475569;
+}
+
+.reset:hover {
+
+    background: #64748b;
+}
+
+
+/* ============================================================
+   BALANCING
+============================================================ */
+
+.balance-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 15px;
+
+    padding: 20px;
+}
+
+.balance-card {
+
+    padding: 20px;
+
+    border-radius: 10px;
+
+    background: #0f172a;
+}
+
+.before {
+
+    border-left:
+        5px solid #dc2626;
+}
+
+.after {
+
+    border-left:
+        5px solid #16a34a;
+}
+
+.balance-card h3 {
+
+    margin-top: 0;
+}
+
+.big-number {
+
+    font-size: 30px;
+
+    font-weight: bold;
+
+    margin: 8px 0 20px;
+}
+
+
+/* ============================================================
+   SHIFT STATUS
+============================================================ */
+
+.shift-status {
+
+    margin: 0 20px 20px;
+
+    padding: 18px;
+
+    text-align: center;
+
+    background: #1e293b;
+
+    border-radius: 10px;
+}
+
+.shift-number {
+
+    font-size: 34px;
+
+    font-weight: bold;
+
+    color: #facc15;
+}
+
+.success {
+
+    color: #4ade80;
+
+    font-weight: bold;
+}
+
+
+/* ============================================================
+   ROUTE
+============================================================ */
+
+.route-container {
+
+    padding: 20px;
+}
+
+.route-node {
+
+    display: inline-block;
+
+    padding: 10px 14px;
+
+    background: #1e293b;
+
+    border-radius: 7px;
+
+    margin: 4px;
+}
+
+.route-arrow {
+
+    color: #22c55e;
+
+    font-weight: bold;
+}
+
+
+/* ============================================================
+   TABLE
+============================================================ */
+
+.table-container {
+
+    padding: 20px;
+}
+
+table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+th,
+td {
+
+    padding: 13px;
+
+    border-bottom:
+        1px solid #263244;
+
+    text-align: center;
+}
+
+th {
+
+    color: #94a3b8;
+}
+
+
+/* ============================================================
+   LEGEND
+============================================================ */
+
+.legend {
+
+    display: flex;
+
+    gap: 20px;
+
+    padding: 15px 20px;
+
+    flex-wrap: wrap;
+
+    color: #cbd5e1;
+
+    font-size: 13px;
+}
+
+.legend-item {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+}
+
+.legend-dot {
+
+    width: 13px;
+
+    height: 13px;
+
+    border-radius: 50%;
+}
+
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+
+@media(max-width:1100px) {
+
+    .cards {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .main-grid {
+
+        grid-template-columns: 1fr;
+    }
+}
+
+@media(max-width:600px) {
+
+    .cards {
+
+        grid-template-columns: 1fr;
+    }
+
+    .balance-grid {
+
+        grid-template-columns: 1fr;
+    }
+}
+
+</style>
 
 </head>
 
 
 <body>
 
+
+<!-- ============================================================
+     HEADER
+============================================================ -->
 
 <header>
 
@@ -243,329 +653,123 @@
     </h1>
 
     <p>
-        Python-Based Load Analysis • Congestion Detection • Dijkstra • A*
+        Congestion Detection • Network Topology • Dijkstra • A*
+        • User Shifting Simulation
     </p>
 
 </header>
 
 
+
 <div class="container">
 
 
-    <!-- SUMMARY -->
+<!-- ============================================================
+     STATUS
+============================================================ -->
 
-    <div class="stats">
+<div class="status-bar">
 
-        <div class="card">
+    System Status:
 
-            <div class="card-title">
-                Dataset Records
-            </div>
+    <span
+        id="systemStatus"
+        class="status-ok">
 
-            <div class="card-value" id="records">
-                Loading...
-            </div>
+        Loading Python results...
 
+    </span>
+
+</div>
+
+
+
+<!-- ============================================================
+     SUMMARY CARDS
+============================================================ -->
+
+<div class="cards">
+
+
+    <div class="card">
+
+        <div class="card-title">
+            Dataset Records
         </div>
 
+        <div
+            class="card-value"
+            id="records">
 
-        <div class="card">
-
-            <div class="card-title">
-                Base Stations
-            </div>
-
-            <div class="card-value" id="stations">
-                Loading...
-            </div>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="card-title">
-                Network Sectors
-            </div>
-
-            <div class="card-value" id="sectors">
-                Loading...
-            </div>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="card-title">
-                Congested Sector
-            </div>
-
-            <div class="card-value" id="congested">
-                Loading...
-            </div>
+            —
 
         </div>
 
     </div>
 
 
+    <div class="card">
 
-    <div class="main">
-
-
-        <!-- NETWORK -->
-
-        <div class="panel">
-
-            <div class="panel-title">
-                Network Topology
-            </div>
-
-            <svg
-                id="network"
-                viewBox="0 0 900 600">
-            </svg>
-
+        <div class="card-title">
+            Base Stations
         </div>
 
+        <div
+            class="card-value"
+            id="stations">
 
-
-        <!-- DETAILS -->
-
-        <div class="panel">
-
-            <div class="panel-title">
-                Sector Details
-            </div>
-
-
-            <div class="details">
-
-                <div class="detail">
-
-                    <span class="label">
-                        Selected Sector
-                    </span>
-
-                    <span
-                        class="value"
-                        id="selected">
-                        —
-                    </span>
-
-                </div>
-
-
-                <div class="detail">
-
-                    <span class="label">
-                        Load Score
-                    </span>
-
-                    <span
-                        class="value"
-                        id="load">
-                        —
-                    </span>
-
-                </div>
-
-
-                <div class="detail">
-
-                    <span class="label">
-                        Load Status
-                    </span>
-
-                    <span
-                        class="value"
-                        id="status">
-                        —
-                    </span>
-
-                </div>
-
-
-                <div class="detail">
-
-                    <span class="label">
-                        Source
-                    </span>
-
-                    <span
-                        class="value"
-                        id="source">
-                        —
-                    </span>
-
-                </div>
-
-
-                <div class="detail">
-
-                    <span class="label">
-                        Target
-                    </span>
-
-                    <span
-                        class="value"
-                        id="target">
-                        —
-                    </span>
-
-                </div>
-
-
-                <div class="detail">
-
-                    <span class="label">
-                        Target Load
-                    </span>
-
-                    <span
-                        class="value"
-                        id="targetLoad">
-                        —
-                    </span>
-
-                </div>
-
-
-                <div class="detail">
-
-                    <span class="label">
-                        Network Nodes
-                    </span>
-
-                    <span
-                        class="value"
-                        id="nodes">
-                        —
-                    </span>
-
-                </div>
-
-
-                <div class="detail">
-
-                    <span class="label">
-                        Network Connections
-                    </span>
-
-                    <span
-                        class="value"
-                        id="edges">
-                        —
-                    </span>
-
-                </div>
-
-
-                <div class="buttons">
-
-                    <button onclick="simulateShift()">
-                        ▶ Simulate User Shifting
-                    </button>
-
-                    <button onclick="loadResults()">
-                        ↻ Refresh Results
-                    </button>
-
-                </div>
-
-
-                <div
-                    class="status"
-                    id="message">
-
-                    Connecting to Python...
-
-                </div>
-
-            </div>
+            —
 
         </div>
 
     </div>
 
 
+    <div class="card">
 
-    <!-- ALGORITHM COMPARISON -->
-
-    <div
-        class="panel"
-        style="margin-top:20px;">
-
-        <div class="panel-title">
-            Dijkstra vs A*
+        <div class="card-title">
+            Network Sectors
         </div>
 
+        <div
+            class="card-value"
+            id="sectors">
 
-        <div style="padding:20px">
+            —
 
-            <table>
+        </div>
 
-                <tr>
-
-                    <th>
-                        Metric
-                    </th>
-
-                    <th>
-                        Dijkstra
-                    </th>
-
-                    <th>
-                        A*
-                    </th>
-
-                </tr>
+    </div>
 
 
-                <tr>
+    <div class="card">
 
-                    <td>
-                        Path Cost
-                    </td>
+        <div class="card-title">
+            Network Connections
+        </div>
 
-                    <td id="dijkstraCost">
-                        —
-                    </td>
+        <div
+            class="card-value"
+            id="edges">
 
-                    <td id="astarCost">
-                        —
-                    </td>
+            —
 
-                </tr>
+        </div>
 
-
-                <tr>
-
-                    <td>
-                        Nodes Explored
-                    </td>
-
-                    <td id="dijkstraNodes">
-                        —
-                    </td>
-
-                    <td id="astarNodes">
-                        —
-                    </td>
-
-                </tr>
-
-            </table>
+    </div>
 
 
-            <div
-                class="status"
-                id="comparison">
+    <div class="card">
 
-                Waiting for Python results...
+        <div class="card-title">
+            Congested Tower
+        </div>
 
-            </div>
+        <div
+            class="card-value"
+            id="sourceCard">
+
+            —
 
         </div>
 
@@ -576,23 +780,599 @@
 
 
 
+<!-- ============================================================
+     MAIN GRID
+============================================================ -->
+
+<div class="main-grid">
+
+
+<!-- ============================================================
+     LEFT SIDE
+============================================================ -->
+
+<div>
+
+
+    <div class="panel">
+
+        <div class="panel-title">
+
+            🌐 Telecom Network Topology
+
+        </div>
+
+
+        <div class="network-wrapper">
+
+            <svg
+                id="network"
+                viewBox="0 0 1100 650">
+
+            </svg>
+
+        </div>
+
+
+        <div class="legend">
+
+            <div class="legend-item">
+
+                <span
+                    class="legend-dot"
+                    style="background:#dc2626">
+                </span>
+
+                Congested Source
+
+            </div>
+
+
+            <div class="legend-item">
+
+                <span
+                    class="legend-dot"
+                    style="background:#16a34a">
+                </span>
+
+                Target Tower
+
+            </div>
+
+
+            <div class="legend-item">
+
+                <span
+                    class="legend-dot"
+                    style="background:#f97316">
+                </span>
+
+                High Load
+
+            </div>
+
+
+            <div class="legend-item">
+
+                <span
+                    class="legend-dot"
+                    style="background:#2563eb">
+                </span>
+
+                Normal
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ========================================================
+         BALANCING
+    ========================================================= -->
+
+    <div class="panel">
+
+        <div class="panel-title">
+
+            ⚖️ User Load Balancing Simulation
+
+        </div>
+
+
+        <div class="balance-grid">
+
+
+            <div class="balance-card before">
+
+                <h3>
+                    🔴 Before Balancing
+                </h3>
+
+                <p>
+                    Congested Tower
+                </p>
+
+                <div
+                    class="big-number"
+                    id="beforeTower">
+
+                    —
+
+                </div>
+
+
+                <p>
+                    Simulated Users
+                </p>
+
+                <div
+                    class="big-number"
+                    id="beforeUsers">
+
+                    —
+
+                </div>
+
+
+                <p>
+                    Load Score
+                </p>
+
+                <strong id="beforeLoad">
+
+                    —
+
+                </strong>
+
+            </div>
+
+
+
+            <div class="balance-card after">
+
+                <h3>
+                    🟢 After Balancing
+                </h3>
+
+                <p>
+                    Source Users
+                </p>
+
+                <div
+                    class="big-number"
+                    id="afterSource">
+
+                    —
+
+                </div>
+
+
+                <p>
+                    Target Users
+                </p>
+
+                <div
+                    class="big-number"
+                    id="afterTarget">
+
+                    —
+
+                </div>
+
+
+                <p>
+                    Target Tower
+                </p>
+
+                <strong id="afterTower">
+
+                    —
+
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="shift-status">
+
+            <div>
+                Users shifted
+            </div>
+
+            <div
+                class="shift-number"
+                id="shiftCount">
+
+                0
+
+            </div>
+
+            <div id="shiftMessage">
+
+                Click "Simulate User Shifting"
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ========================================================
+         ROUTE
+    ========================================================= -->
+
+    <div class="panel">
+
+        <div class="panel-title">
+
+            🛣️ A* Optimized User-Shifting Route
+
+        </div>
+
+
+        <div
+            class="route-container"
+            id="route">
+
+            Loading route...
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ========================================================
+         ALGORITHM COMPARISON
+    ========================================================= -->
+
+    <div class="panel">
+
+        <div class="panel-title">
+
+            🔍 Dijkstra vs A* Comparison
+
+        </div>
+
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Metric
+                        </th>
+
+                        <th>
+                            Dijkstra
+                        </th>
+
+                        <th>
+                            A*
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    <tr>
+
+                        <td>
+                            Path Cost
+                        </td>
+
+                        <td id="dijkstraCost">
+                            —
+                        </td>
+
+                        <td id="astarCost">
+                            —
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            Nodes Explored
+                        </td>
+
+                        <td id="dijkstraNodes">
+                            —
+                        </td>
+
+                        <td id="astarNodes">
+                            —
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<!-- ============================================================
+     RIGHT SIDE
+============================================================ -->
+
+<div>
+
+
+    <div class="panel">
+
+        <div class="panel-title">
+
+            📡 Selected Tower Details
+
+        </div>
+
+
+        <div class="details">
+
+
+            <div class="detail-row">
+
+                <span class="detail-label">
+                    Tower
+                </span>
+
+                <span
+                    class="detail-value"
+                    id="towerName">
+
+                    Click a tower
+
+                </span>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span class="detail-label">
+                    Sector
+                </span>
+
+                <span
+                    class="detail-value"
+                    id="towerSector">
+
+                    —
+
+                </span>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span class="detail-label">
+                    Load Score
+                </span>
+
+                <span
+                    class="detail-value"
+                    id="towerLoad">
+
+                    —
+
+                </span>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span class="detail-label">
+                    Status
+                </span>
+
+                <span
+                    class="detail-value"
+                    id="towerStatus">
+
+                    —
+
+                </span>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span class="detail-label">
+                    Network Role
+                </span>
+
+                <span
+                    class="detail-value"
+                    id="towerRole">
+
+                    —
+
+                </span>
+
+            </div>
+
+
+            <div class="buttons">
+
+                <button
+                    id="simulateButton"
+                    onclick="simulateShifting()">
+
+                    ▶ Simulate User Shifting
+
+                </button>
+
+
+                <button
+                    class="reset"
+                    onclick="resetSimulation()">
+
+                    ↻ Reset
+
+                </button>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ========================================================
+         CONGESTION INFORMATION
+    ========================================================= -->
+
+    <div class="panel">
+
+        <div class="panel-title">
+
+            🚨 Congestion Analysis
+
+        </div>
+
+
+        <div class="details">
+
+
+            <div class="detail-row">
+
+                <span class="detail-label">
+                    Source Tower
+                </span>
+
+                <span
+                    class="detail-value"
+                    id="analysisSource">
+
+                    —
+
+                </span>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span class="detail-label">
+                    Source Load
+                </span>
+
+                <span
+                    class="detail-value"
+                    id="analysisSourceLoad">
+
+                    —
+
+                </span>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span class="detail-label">
+                    Target Tower
+                </span>
+
+                <span
+                    class="detail-value"
+                    id="analysisTarget">
+
+                    —
+
+                </span>
+
+            </div>
+
+
+            <div class="detail-row">
+
+                <span class="detail-label">
+                    Target Load
+                </span>
+
+                <span
+                    class="detail-value"
+                    id="analysisTargetLoad">
+
+                    —
+
+                </span>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
 <script>
 
 
-let results = null;
+// ============================================================
+// GLOBAL DATA
+// ============================================================
+
+let DATA = null;
+
+let selectedTower = null;
+
+let simulationRunning = false;
+
+let simulationComplete = false;
+
+let userPositions = [];
+
+let animationTimer = null;
 
 
-/*
-    GET RESULTS FROM PYTHON
-*/
+
+// ============================================================
+// LOAD PYTHON RESULTS
+// ============================================================
 
 async function loadResults() {
-
-    document.getElementById(
-        "message"
-    ).innerText =
-        "Running Python analysis...";
-
 
     try {
 
@@ -603,167 +1383,267 @@ async function loadResults() {
         if (!response.ok) {
 
             throw new Error(
-                "Python backend not available"
+                "Could not load Python results."
             );
 
         }
 
 
-        results =
+        DATA =
             await response.json();
 
 
-        displayResults();
+        document.getElementById(
+            "systemStatus"
+        ).innerText =
+            "✓ Python algorithm connected";
+
+
+        displaySummary();
+
+        displayAnalysis();
+
+        displayAlgorithms();
+
+        displayRoute();
+
+        drawNetwork();
+
+        selectTower(DATA.source);
 
 
     }
 
-    catch (error) {
-
-        document.getElementById(
-            "message"
-        ).innerText =
-            "Could not connect to midsem_demo.py";
+    catch(error) {
 
         console.error(error);
+
+
+        document.getElementById(
+            "systemStatus"
+        ).innerText =
+            "❌ " + error.message;
 
     }
 
 }
 
 
-/*
-    DISPLAY PYTHON RESULTS
-*/
 
-function displayResults() {
+// ============================================================
+// SUMMARY
+// ============================================================
+
+function displaySummary() {
 
     document.getElementById(
         "records"
     ).innerText =
-        results.dataset_records;
+        Number(
+            DATA.dataset_records
+        ).toLocaleString();
 
 
     document.getElementById(
         "stations"
     ).innerText =
-        results.base_stations;
+        DATA.base_stations;
 
 
     document.getElementById(
         "sectors"
     ).innerText =
-        results.sectors;
-
-
-    document.getElementById(
-        "congested"
-    ).innerText =
-        results.source;
-
-
-    document.getElementById(
-        "source"
-    ).innerText =
-        results.source;
-
-
-    document.getElementById(
-        "target"
-    ).innerText =
-        results.target;
-
-
-    document.getElementById(
-        "targetLoad"
-    ).innerText =
-        results.target_load.toFixed(6);
-
-
-    document.getElementById(
-        "nodes"
-    ).innerText =
-        results.network_nodes;
+        DATA.sectors;
 
 
     document.getElementById(
         "edges"
     ).innerText =
-        results.network_edges;
+        DATA.network_edges;
 
+
+    document.getElementById(
+        "sourceCard"
+    ).innerText =
+        DATA.source;
+
+}
+
+
+
+// ============================================================
+// ANALYSIS
+// ============================================================
+
+function displayAnalysis() {
+
+    document.getElementById(
+        "analysisSource"
+    ).innerText =
+        DATA.source;
+
+
+    document.getElementById(
+        "analysisSourceLoad"
+    ).innerText =
+        Number(
+            DATA.source_load
+        ).toFixed(6);
+
+
+    document.getElementById(
+        "analysisTarget"
+    ).innerText =
+        DATA.target;
+
+
+    document.getElementById(
+        "analysisTargetLoad"
+    ).innerText =
+        Number(
+            DATA.target_load
+        ).toFixed(6);
+
+}
+
+
+
+// ============================================================
+// ALGORITHMS
+// ============================================================
+
+function displayAlgorithms() {
 
     document.getElementById(
         "dijkstraCost"
     ).innerText =
-        results.dijkstra_cost;
+        DATA.dijkstra_cost;
 
 
     document.getElementById(
         "astarCost"
     ).innerText =
-        results.astar_cost;
+        DATA.astar_cost;
 
 
     document.getElementById(
         "dijkstraNodes"
     ).innerText =
-        results.dijkstra_nodes;
+        DATA.dijkstra_nodes;
 
 
     document.getElementById(
         "astarNodes"
     ).innerText =
-        results.astar_nodes;
-
-
-    if (
-        results.astar_nodes <
-        results.dijkstra_nodes
-    ) {
-
-        document.getElementById(
-            "comparison"
-        ).innerText =
-            "A* explored fewer nodes.";
-
-    }
-
-    else if (
-        results.astar_nodes ===
-        results.dijkstra_nodes
-    ) {
-
-        document.getElementById(
-            "comparison"
-        ).innerText =
-            "Both algorithms explored the same number of nodes.";
-
-    }
-
-    else {
-
-        document.getElementById(
-            "comparison"
-        ).innerText =
-            "Dijkstra explored fewer nodes.";
-
-    }
-
-
-    document.getElementById(
-        "message"
-    ).innerText =
-        "Python analysis loaded successfully.";
-
-
-    drawNetwork();
+        DATA.astar_nodes;
 
 }
 
 
-/*
-    DRAW PATH
-*/
+
+// ============================================================
+// ROUTE
+// ============================================================
+
+function displayRoute() {
+
+    const container =
+        document.getElementById(
+            "route"
+        );
+
+
+    container.innerHTML = "";
+
+
+    DATA.astar_path.forEach(
+        function(node, index) {
+
+
+            const span =
+                document.createElement(
+                    "span"
+                );
+
+
+            span.className =
+                "route-node";
+
+
+            span.innerText =
+                node;
+
+
+            container.appendChild(
+                span
+            );
+
+
+            if(
+                index <
+                DATA.astar_path.length - 1
+            ) {
+
+                const arrow =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                arrow.className =
+                    "route-arrow";
+
+
+                arrow.innerText =
+                    " → ";
+
+
+                container.appendChild(
+                    arrow
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+
+// ============================================================
+// GET NODE STATUS
+// ============================================================
+
+function getStatus(load) {
+
+    if(
+        load <= DATA.low_threshold
+    ) {
+
+        return "Low";
+
+    }
+
+
+    if(
+        load <= DATA.high_threshold
+    ) {
+
+        return "Moderate";
+
+    }
+
+
+    return "High";
+
+}
+
+
+
+// ============================================================
+// DRAW NETWORK
+// ============================================================
 
 function drawNetwork() {
 
@@ -776,71 +1656,205 @@ function drawNetwork() {
     svg.innerHTML = "";
 
 
-    const path =
-        results.astar_path;
+    const nodes =
+        Object.keys(
+            DATA.node_loads
+        );
 
 
-    if (
-        !path ||
-        path.length === 0
-    ) {
+    if(nodes.length === 0) {
 
         return;
 
     }
 
 
-    /*
-        Automatically position nodes
-    */
-
     const positions = {};
 
-    const startX = 100;
 
-    const endX = 800;
+    const centerX = 550;
 
-    const step =
-        (endX - startX) /
-        Math.max(
-            path.length - 1,
-            1
+    const centerY = 325;
+
+    const radius =
+        Math.min(
+            260,
+            30 + nodes.length * 9
         );
 
 
-    path.forEach(
-        (node, index) => {
+    // --------------------------------------------------------
+    // NODE POSITIONS
+    // --------------------------------------------------------
 
-            positions[node] = [
+    nodes.forEach(
+        function(node, index) {
 
-                startX +
-                index * step,
+            const angle =
+                (
+                    2 *
+                    Math.PI *
+                    index
+                )
+                /
+                nodes.length;
 
-                index % 2 === 0
-                    ? 350
-                    : 220
 
-            ];
+            positions[node] = {
+
+                x:
+                    centerX +
+                    radius *
+                    Math.cos(angle),
+
+                y:
+                    centerY +
+                    radius *
+                    Math.sin(angle)
+
+            };
 
         }
     );
 
 
-    /*
-        Draw connections
-    */
 
-    for (
+    // --------------------------------------------------------
+    // NORMAL EDGES
+    //
+    // We create visual connections based on
+    // the algorithm path and nearby nodes.
+    // --------------------------------------------------------
+
+    const edgePairs = [];
+
+
+    // Connect consecutive nodes
+    for(
         let i = 0;
-        i < path.length - 1;
+        i < nodes.length - 1;
+        i++
+    ) {
+
+        edgePairs.push(
+            [
+                nodes[i],
+                nodes[i + 1]
+            ]
+        );
+
+    }
+
+
+    // Additional connections
+    for(
+        let i = 0;
+        i < nodes.length - 3;
+        i += 3
+    ) {
+
+        edgePairs.push(
+            [
+                nodes[i],
+                nodes[i + 3]
+            ]
+        );
+
+    }
+
+
+
+    // --------------------------------------------------------
+    // DRAW NORMAL EDGES
+    // --------------------------------------------------------
+
+    edgePairs.forEach(
+        function(edge) {
+
+            const a =
+                positions[edge[0]];
+
+            const b =
+                positions[edge[1]];
+
+
+            if(!a || !b) {
+
+                return;
+
+            }
+
+
+            const line =
+                document.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    "line"
+                );
+
+
+            line.setAttribute(
+                "x1",
+                a.x
+            );
+
+            line.setAttribute(
+                "y1",
+                a.y
+            );
+
+            line.setAttribute(
+                "x2",
+                b.x
+            );
+
+            line.setAttribute(
+                "y2",
+                b.y
+            );
+
+
+            line.setAttribute(
+                "class",
+                "edge"
+            );
+
+
+            svg.appendChild(
+                line
+            );
+
+        }
+    );
+
+
+
+    // --------------------------------------------------------
+    // DRAW A* ROUTE
+    // --------------------------------------------------------
+
+    for(
+        let i = 0;
+        i < DATA.astar_path.length - 1;
         i++
     ) {
 
         const a =
-            positions[path[i]];
+            positions[
+                DATA.astar_path[i]
+            ];
+
 
         const b =
-            positions[path[i + 1]];
+            positions[
+                DATA.astar_path[i + 1]
+            ];
+
+
+        if(!a || !b) {
+
+            continue;
+
+        }
 
 
         const line =
@@ -852,101 +1866,56 @@ function drawNetwork() {
 
         line.setAttribute(
             "x1",
-            a[0]
+            a.x
         );
 
         line.setAttribute(
             "y1",
-            a[1]
+            a.y
         );
 
         line.setAttribute(
             "x2",
-            b[0]
+            b.x
         );
 
         line.setAttribute(
             "y2",
-            b[1]
+            b.y
         );
 
 
         line.setAttribute(
             "class",
-            "edge route"
+            "route-edge"
         );
 
 
-        svg.appendChild(line);
+        svg.appendChild(
+            line
+        );
 
     }
 
 
-    /*
-        User shifting line
-    */
 
-    const first =
-        positions[path[0]];
+    // --------------------------------------------------------
+    // DRAW NODES
+    // --------------------------------------------------------
 
-    const last =
-        positions[
-            path[path.length - 1]
-        ];
+    nodes.forEach(
+        function(node) {
 
-
-    const shift =
-        document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "line"
-        );
-
-
-    shift.setAttribute(
-        "x1",
-        first[0]
-    );
-
-    shift.setAttribute(
-        "y1",
-        first[1]
-    );
-
-    shift.setAttribute(
-        "x2",
-        last[0]
-    );
-
-    shift.setAttribute(
-        "y2",
-        last[1]
-    );
-
-
-    shift.setAttribute(
-        "class",
-        "shift"
-    );
-
-
-    shift.id =
-        "shiftLine";
-
-
-    svg.appendChild(
-        shift
-    );
-
-
-    /*
-        Draw nodes
-    */
-
-    path.forEach(
-        (node, index) => {
-
-            const [x, y] =
+            const position =
                 positions[node];
+
+
+            const load =
+                DATA.node_loads[node];
+
+
+            const status =
+                getStatus(load);
 
 
             const group =
@@ -962,35 +1931,46 @@ function drawNetwork() {
             );
 
 
-            /*
-                Node type
-            */
+            // ----------------------------------------------
+            // NODE COLOR
+            // ----------------------------------------------
 
-            let nodeClass =
-                "normal";
+            let className =
+                "normal-node";
 
 
-            if (index === 0) {
-
-                nodeClass =
-                    "source";
-
-            }
-
-            else if (
-                index ===
-                path.length - 1
+            if(
+                node === DATA.source
             ) {
 
-                nodeClass =
-                    "target";
+                className =
+                    "source-node";
+
+            }
+
+            else if(
+                node === DATA.target
+            ) {
+
+                className =
+                    "target-node";
+
+            }
+
+            else if(
+                status === "High"
+            ) {
+
+                className =
+                    "high-node";
 
             }
 
 
-            /*
-                Circle
-            */
+
+            // ----------------------------------------------
+            // CIRCLE
+            // ----------------------------------------------
 
             const circle =
                 document.createElementNS(
@@ -1001,23 +1981,28 @@ function drawNetwork() {
 
             circle.setAttribute(
                 "cx",
-                x
+                position.x
             );
 
             circle.setAttribute(
                 "cy",
-                y
+                position.y
             );
+
 
             circle.setAttribute(
                 "r",
-                32
+                node === DATA.source ||
+                node === DATA.target
+                    ? 23
+                    : 18
             );
 
 
             circle.setAttribute(
                 "class",
-                nodeClass
+                "node-circle " +
+                className
             );
 
 
@@ -1026,47 +2011,99 @@ function drawNetwork() {
             );
 
 
-            /*
-                Node name
-            */
 
-            const text =
+            // ----------------------------------------------
+            // LOAD / USER DISPLAY
+            // ----------------------------------------------
+
+            const userText =
                 document.createElementNS(
                     "http://www.w3.org/2000/svg",
                     "text"
                 );
 
 
-            text.setAttribute(
+            userText.setAttribute(
                 "x",
-                x
+                position.x
             );
 
-            text.setAttribute(
+
+            userText.setAttribute(
                 "y",
-                y + 55
+                position.y + 4
             );
 
 
-            text.textContent =
+            userText.setAttribute(
+                "class",
+                "user-label"
+            );
+
+
+            userText.textContent =
+                Math.round(
+                    load * 1000
+                );
+
+
+            group.appendChild(
+                userText
+            );
+
+
+
+            // ----------------------------------------------
+            // NODE NAME
+            // ----------------------------------------------
+
+            const label =
+                document.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    "text"
+                );
+
+
+            label.setAttribute(
+                "x",
+                position.x
+            );
+
+
+            label.setAttribute(
+                "y",
+                position.y + 42
+            );
+
+
+            label.setAttribute(
+                "class",
+                "node-label"
+            );
+
+
+            label.textContent =
                 node;
 
 
             group.appendChild(
-                text
+                label
             );
 
 
-            /*
-                Click node
-            */
 
-            group.onclick =
-                function () {
+            // ----------------------------------------------
+            // CLICK
+            // ----------------------------------------------
 
-                    showNode(node);
+            group.addEventListener(
+                "click",
+                function() {
 
-                };
+                    selectTower(node);
+
+                }
+            );
 
 
             svg.appendChild(
@@ -1076,139 +2113,659 @@ function drawNetwork() {
         }
     );
 
+
+    // Save positions for animation
+
+    window.networkPositions =
+        positions;
+
 }
 
 
-/*
-    SHOW NODE
-*/
 
-function showNode(node) {
+// ============================================================
+// SELECT TOWER
+// ============================================================
+
+function selectTower(node) {
+
+    selectedTower =
+        node;
+
+
+    const load =
+        DATA.node_loads[node];
+
+
+    const status =
+        getStatus(load);
+
 
     document.getElementById(
-        "selected"
+        "towerName"
     ).innerText =
         node;
 
 
-    if (
-        results.node_loads &&
-        results.node_loads[node]
-        !== undefined
-    ) {
+    // Sector extraction
 
-        const load =
-            results.node_loads[node];
-
-
-        document.getElementById(
-            "load"
-        ).innerText =
-            Number(load).toFixed(6);
-
-
-        let status =
-            "Low";
-
-
-        if (
-            load >
-            results.high_threshold
-        ) {
-
-            status =
-                "High";
-
-        }
-
-        else if (
-            load >
-            results.low_threshold
-        ) {
-
-            status =
-                "Moderate";
-
-        }
-
-
-        document.getElementById(
-            "status"
-        ).innerText =
-            status;
-
-    }
-
-}
-
-
-/*
-    USER SHIFTING
-*/
-
-function simulateShift() {
-
-    if (!results) {
-
-        return;
-
-    }
-
-
-    const line =
-        document.getElementById(
-            "shiftLine"
-        );
-
-
-    if (!line) {
-
-        return;
-
-    }
-
-
-    line.classList.add(
-        "active"
-    );
+    const parts =
+        node.split("-");
 
 
     document.getElementById(
-        "message"
+        "towerSector"
     ).innerText =
-        "Users are being shifted from " +
-        results.source +
-        " toward " +
-        results.target +
-        " using the optimized path.";
+        parts.length > 1
+            ? parts[parts.length - 1]
+            : "—";
 
 
-    setTimeout(
-        function () {
-
-            line.classList.remove(
-                "active"
-            );
+    document.getElementById(
+        "towerLoad"
+    ).innerText =
+        Number(load).toFixed(6);
 
 
-            document.getElementById(
-                "message"
-            ).innerText =
-                "Load-balancing path completed.";
+    document.getElementById(
+        "towerStatus"
+    ).innerText =
+        status;
 
-        },
-        5000
+
+    let role =
+        "Normal Tower";
+
+
+    if(
+        node === DATA.source
+    ) {
+
+        role =
+            "🔴 Congested Source";
+
+    }
+
+    else if(
+        node === DATA.target
+    ) {
+
+        role =
+            "🟢 Selected Target";
+
+    }
+
+
+    document.getElementById(
+        "towerRole"
+    ).innerText =
+        role;
+
+}
+
+
+
+// ============================================================
+// SIMULATED USER COUNT
+//
+// Current Python API gives load values.
+// Therefore we convert load to a visual user count.
+// This is for demonstration only.
+// ============================================================
+
+function getVisualUsers(node) {
+
+    const load =
+        DATA.node_loads[node];
+
+
+    return Math.max(
+        10,
+        Math.round(
+            load * 1000
+        )
     );
 
 }
 
 
-/*
-    LOAD WHEN PAGE OPENS
-*/
+
+// ============================================================
+// USER SHIFT CALCULATION
+// ============================================================
+
+function calculateShift() {
+
+    const sourceUsers =
+        getVisualUsers(
+            DATA.source
+        );
+
+
+    const targetUsers =
+        getVisualUsers(
+            DATA.target
+        );
+
+
+    let shift =
+        Math.floor(
+            (
+                sourceUsers
+                -
+                targetUsers
+            ) / 2
+        );
+
+
+    shift =
+        Math.max(
+            1,
+            shift
+        );
+
+
+    shift =
+        Math.min(
+            shift,
+            Math.floor(
+                sourceUsers * 0.4
+            )
+        );
+
+
+    return shift;
+
+}
+
+
+
+// ============================================================
+// SIMULATION
+// ============================================================
+
+async function simulateShifting() {
+
+    if(!DATA) {
+
+        return;
+
+    }
+
+
+    if(simulationRunning) {
+
+        return;
+
+    }
+
+
+    simulationRunning =
+        true;
+
+
+    simulationComplete =
+        false;
+
+
+    const button =
+        document.getElementById(
+            "simulateButton"
+        );
+
+
+    button.disabled =
+        true;
+
+
+    const source =
+        DATA.source;
+
+
+    const target =
+        DATA.target;
+
+
+    const sourceUsers =
+        getVisualUsers(source);
+
+
+    const targetUsers =
+        getVisualUsers(target);
+
+
+    const shift =
+        calculateShift();
+
+
+    document.getElementById(
+        "beforeTower"
+    ).innerText =
+        source;
+
+
+    document.getElementById(
+        "beforeUsers"
+    ).innerText =
+        sourceUsers;
+
+
+    document.getElementById(
+        "beforeLoad"
+    ).innerText =
+        Number(
+            DATA.source_load
+        ).toFixed(6);
+
+
+    document.getElementById(
+        "afterTower"
+    ).innerText =
+        target;
+
+
+    document.getElementById(
+        "shiftCount"
+    ).innerText =
+        shift;
+
+
+    document.getElementById(
+        "shiftMessage"
+    ).innerText =
+        "Detecting congestion...";
+
+
+    await sleep(800);
+
+
+    document.getElementById(
+        "shiftMessage"
+    ).innerText =
+        "A* selected the optimized route.";
+
+
+    await sleep(800);
+
+
+    document.getElementById(
+        "shiftMessage"
+    ).innerText =
+        "Moving users from " +
+        source +
+        " to " +
+        target +
+        "...";
+
+
+    await animateUsers(
+        source,
+        target,
+        shift
+    );
+
+
+    // --------------------------------------------------------
+    // AFTER VALUES
+    // --------------------------------------------------------
+
+    const finalSource =
+        sourceUsers - shift;
+
+
+    const finalTarget =
+        targetUsers + shift;
+
+
+    document.getElementById(
+        "afterSource"
+    ).innerText =
+        finalSource;
+
+
+    document.getElementById(
+        "afterTarget"
+    ).innerText =
+        finalTarget;
+
+
+    document.getElementById(
+        "shiftMessage"
+    ).innerHTML =
+        "<span class='success'>" +
+        "✓ User shifting completed successfully" +
+        "</span>";
+
+
+    simulationComplete =
+        true;
+
+
+    simulationRunning =
+        false;
+
+
+    button.disabled =
+        false;
+
+}
+
+
+
+// ============================================================
+// ANIMATE USERS
+// ============================================================
+
+async function animateUsers(
+    source,
+    target,
+    count
+) {
+
+    const svg =
+        document.getElementById(
+            "network"
+        );
+
+
+    const positions =
+        window.networkPositions;
+
+
+    const path =
+        DATA.astar_path;
+
+
+    if(
+        !path ||
+        path.length < 2
+    ) {
+
+        await sleep(1000);
+
+        return;
+
+    }
+
+
+    // Number of visual dots
+
+    const dots =
+        Math.min(
+            20,
+            Math.max(
+                8,
+                Math.round(
+                    count / 5
+                )
+            )
+        );
+
+
+    for(
+        let d = 0;
+        d < dots;
+        d++
+    ) {
+
+        const dot =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "circle"
+            );
+
+
+        dot.setAttribute(
+            "r",
+            6
+        );
+
+
+        dot.setAttribute(
+            "class",
+            "user-dot"
+        );
+
+
+        svg.appendChild(
+            dot
+        );
+
+
+        animateDot(
+            dot,
+            path,
+            positions,
+            d * 150
+        );
+
+    }
+
+
+    await sleep(
+        path.length * 650 + 1200
+    );
+
+}
+
+
+
+// ============================================================
+// ANIMATE ONE DOT
+// ============================================================
+
+function animateDot(
+    dot,
+    path,
+    positions,
+    delay
+) {
+
+    setTimeout(
+        async function() {
+
+            for(
+                let i = 0;
+                i < path.length - 1;
+                i++
+            ) {
+
+                const a =
+                    positions[
+                        path[i]
+                    ];
+
+
+                const b =
+                    positions[
+                        path[i + 1]
+                    ];
+
+
+                if(!a || !b) {
+
+                    continue;
+
+                }
+
+
+                const steps =
+                    20;
+
+
+                for(
+                    let step = 0;
+                    step <= steps;
+                    step++
+                ) {
+
+                    const t =
+                        step / steps;
+
+
+                    const x =
+                        a.x +
+                        (
+                            b.x - a.x
+                        ) * t;
+
+
+                    const y =
+                        a.y +
+                        (
+                            b.y - a.y
+                        ) * t;
+
+
+                    dot.setAttribute(
+                        "cx",
+                        x
+                    );
+
+
+                    dot.setAttribute(
+                        "cy",
+                        y
+                    );
+
+
+                    await sleep(
+                        25
+                    );
+
+                }
+
+            }
+
+
+            dot.remove();
+
+        },
+        delay
+    );
+
+}
+
+
+
+// ============================================================
+// RESET
+// ============================================================
+
+function resetSimulation() {
+
+    simulationRunning =
+        false;
+
+
+    simulationComplete =
+        false;
+
+
+    if(animationTimer) {
+
+        clearTimeout(
+            animationTimer
+        );
+
+    }
+
+
+    document
+        .querySelectorAll(
+            ".user-dot"
+        )
+        .forEach(
+            dot =>
+                dot.remove()
+        );
+
+
+    const sourceUsers =
+        getVisualUsers(
+            DATA.source
+        );
+
+
+    document.getElementById(
+        "beforeTower"
+    ).innerText =
+        DATA.source;
+
+
+    document.getElementById(
+        "beforeUsers"
+    ).innerText =
+        sourceUsers;
+
+
+    document.getElementById(
+        "afterSource"
+    ).innerText =
+        sourceUsers;
+
+
+    document.getElementById(
+        "afterTarget"
+    ).innerText =
+        getVisualUsers(
+            DATA.target
+        );
+
+
+    document.getElementById(
+        "afterTower"
+    ).innerText =
+        DATA.target;
+
+
+    document.getElementById(
+        "shiftCount"
+    ).innerText =
+        0;
+
+
+    document.getElementById(
+        "shiftMessage"
+    ).innerText =
+        'Click "Simulate User Shifting"';
+
+
+    document.getElementById(
+        "simulateButton"
+    ).disabled =
+        false;
+
+
+    drawNetwork();
+
+}
+
+
+
+// ============================================================
+// DELAY
+// ============================================================
+
+function sleep(ms) {
+
+    return new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                ms
+            )
+    );
+
+}
+
+
+
+// ============================================================
+// START
+// ============================================================
 
 loadResults();
-
 
 </script>
 
