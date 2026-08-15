@@ -1,19 +1,17 @@
 import http.server
 import socketserver
-import webbrowser
+import os
 
-PORT = 5500
+PORT = int(os.environ.get("PORT", 10000))
+
+Handler = http.server.SimpleHTTPRequestHandler
 
 server = socketserver.TCPServer(
-    ("127.0.0.1", PORT),
-    http.server.SimpleHTTPRequestHandler
+    ("0.0.0.0", PORT),
+    Handler
 )
 
-url = f"http://127.0.0.1:{PORT}/midsem_dashboard.html"
-
-print("Dashboard is running at:")
-print(url)
-
-webbrowser.open(url)
+print("Dashboard is running")
+print("Port:", PORT)
 
 server.serve_forever()
