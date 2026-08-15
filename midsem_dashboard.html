@@ -14,7 +14,7 @@
 <style>
 
 /* ============================================================
-   BASIC
+   GENERAL
 ============================================================ */
 
 * {
@@ -25,10 +25,7 @@ body {
 
     margin: 0;
 
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
 
     background: #0b1220;
 
@@ -42,9 +39,9 @@ body {
 
 header {
 
-    padding: 28px 35px;
-
     background: #111827;
+
+    padding: 28px 35px;
 
     border-bottom: 1px solid #263244;
 }
@@ -58,10 +55,9 @@ header h1 {
 
 header p {
 
-    margin-top: 8px;
-
     color: #94a3b8;
 
+    margin: 8px 0 0;
 }
 
 
@@ -71,11 +67,11 @@ header p {
 
 .container {
 
-    padding: 22px;
-
-    max-width: 1600px;
+    max-width: 1500px;
 
     margin: auto;
+
+    padding: 22px;
 }
 
 
@@ -83,15 +79,15 @@ header p {
    STATUS
 ============================================================ */
 
-.status-bar {
-
-    padding: 15px 20px;
+.status {
 
     background: #111827;
 
     border: 1px solid #263244;
 
     border-radius: 10px;
+
+    padding: 15px 20px;
 
     margin-bottom: 20px;
 
@@ -142,16 +138,16 @@ header p {
 
 .card-value {
 
-    margin-top: 8px;
-
     font-size: 25px;
 
     font-weight: bold;
+
+    margin-top: 8px;
 }
 
 
 /* ============================================================
-   MAIN GRID
+   TWO COLUMN LAYOUT
 ============================================================ */
 
 .main-grid {
@@ -159,7 +155,7 @@ header p {
     display: grid;
 
     grid-template-columns:
-        2.1fr 1fr;
+        2fr 1fr;
 
     gap: 20px;
 }
@@ -186,60 +182,58 @@ header p {
 
     padding: 17px 20px;
 
+    border-bottom: 1px solid #263244;
+
     font-size: 18px;
 
     font-weight: bold;
-
-    border-bottom: 1px solid #263244;
 }
 
 
 /* ============================================================
-   NETWORK
+   NETWORK GRAPH
 ============================================================ */
 
-.network-wrapper {
-
-    position: relative;
+.network-area {
 
     background: #0f172a;
+
+    padding: 10px;
 }
 
 #network {
 
     width: 100%;
 
-    height: 650px;
+    height: 480px;
 
     display: block;
 }
 
 
 /* ============================================================
-   EDGES
+   GRAPH EDGES
 ============================================================ */
 
 .edge {
 
-    stroke: #334155;
+    stroke: #475569;
 
-    stroke-width: 2;
-
-    opacity: 0.8;
+    stroke-width: 4;
 }
 
 .route-edge {
 
     stroke: #22c55e;
 
-    stroke-width: 6;
+    stroke-width: 7;
 
     stroke-linecap: round;
 }
 
 
 /* ============================================================
-   NODES
+   GRAPH NODES
 ============================================================ */
 
 .node {
@@ -251,48 +245,15 @@ header p {
 
     stroke: #e2e8f0;
 
-    stroke-width: 2;
-
-    transition:
-        transform 0.2s,
-        stroke-width 0.2s;
+    stroke-width: 3;
 }
 
 .node:hover .node-circle {
 
     stroke: #facc15;
 
-    stroke-width: 5;
+    stroke-width: 6;
 }
-
-.node-label {
-
-    fill: #f8fafc;
-
-    font-size: 11px;
-
-    text-anchor: middle;
-
-    pointer-events: none;
-}
-
-.user-label {
-
-    fill: white;
-
-    font-size: 10px;
-
-    text-anchor: middle;
-
-    font-weight: bold;
-
-    pointer-events: none;
-}
-
-
-/* ============================================================
-   NODE COLORS
-============================================================ */
 
 .normal-node {
 
@@ -314,254 +275,41 @@ header p {
     fill: #16a34a;
 }
 
+.node-users {
 
-/* ============================================================
-   USER ANIMATION
-============================================================ */
+    fill: white;
 
-.user-dot {
-
-    fill: #facc15;
-
-    stroke: white;
-
-    stroke-width: 1;
-}
-
-
-/* ============================================================
-   DETAILS
-============================================================ */
-
-.details {
-
-    padding: 20px;
-}
-
-.detail-row {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    padding: 13px 0;
-
-    border-bottom:
-        1px solid #263244;
-}
-
-.detail-label {
-
-    color: #94a3b8;
-}
-
-.detail-value {
-
-    font-weight: bold;
-}
-
-
-/* ============================================================
-   BUTTONS
-============================================================ */
-
-.buttons {
-
-    margin-top: 20px;
-
-    display: flex;
-
-    gap: 10px;
-
-    flex-wrap: wrap;
-}
-
-button {
-
-    padding: 12px 17px;
-
-    border: none;
-
-    border-radius: 7px;
-
-    cursor: pointer;
+    font-size: 13px;
 
     font-weight: bold;
 
-    color: white;
+    text-anchor: middle;
 
-    background: #2563eb;
+    pointer-events: none;
 }
 
-button:hover {
+.node-name {
 
-    background: #1d4ed8;
-}
+    fill: white;
 
-button:disabled {
-
-    background: #475569;
-
-    cursor: not-allowed;
-}
-
-.reset {
-
-    background: #475569;
-}
-
-.reset:hover {
-
-    background: #64748b;
-}
-
-
-/* ============================================================
-   BALANCING
-============================================================ */
-
-.balance-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        1fr 1fr;
-
-    gap: 15px;
-
-    padding: 20px;
-}
-
-.balance-card {
-
-    padding: 20px;
-
-    border-radius: 10px;
-
-    background: #0f172a;
-}
-
-.before {
-
-    border-left:
-        5px solid #dc2626;
-}
-
-.after {
-
-    border-left:
-        5px solid #16a34a;
-}
-
-.balance-card h3 {
-
-    margin-top: 0;
-}
-
-.big-number {
-
-    font-size: 30px;
+    font-size: 13px;
 
     font-weight: bold;
 
-    margin: 8px 0 20px;
+    text-anchor: middle;
+
+    pointer-events: none;
 }
 
+.node-status {
 
-/* ============================================================
-   SHIFT STATUS
-============================================================ */
+    fill: #94a3b8;
 
-.shift-status {
+    font-size: 11px;
 
-    margin: 0 20px 20px;
+    text-anchor: middle;
 
-    padding: 18px;
-
-    text-align: center;
-
-    background: #1e293b;
-
-    border-radius: 10px;
-}
-
-.shift-number {
-
-    font-size: 34px;
-
-    font-weight: bold;
-
-    color: #facc15;
-}
-
-.success {
-
-    color: #4ade80;
-
-    font-weight: bold;
-}
-
-
-/* ============================================================
-   ROUTE
-============================================================ */
-
-.route-container {
-
-    padding: 20px;
-}
-
-.route-node {
-
-    display: inline-block;
-
-    padding: 10px 14px;
-
-    background: #1e293b;
-
-    border-radius: 7px;
-
-    margin: 4px;
-}
-
-.route-arrow {
-
-    color: #22c55e;
-
-    font-weight: bold;
-}
-
-
-/* ============================================================
-   TABLE
-============================================================ */
-
-.table-container {
-
-    padding: 20px;
-}
-
-table {
-
-    width: 100%;
-
-    border-collapse: collapse;
-}
-
-th,
-td {
-
-    padding: 13px;
-
-    border-bottom:
-        1px solid #263244;
-
-    text-align: center;
-}
-
-th {
-
-    color: #94a3b8;
+    pointer-events: none;
 }
 
 
@@ -573,9 +321,11 @@ th {
 
     display: flex;
 
-    gap: 20px;
+    justify-content: center;
 
-    padding: 15px 20px;
+    gap: 25px;
+
+    padding: 15px;
 
     flex-wrap: wrap;
 
@@ -604,10 +354,250 @@ th {
 
 
 /* ============================================================
+   DETAILS
+============================================================ */
+
+.details {
+
+    padding: 20px;
+}
+
+.detail-row {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 13px 0;
+
+    border-bottom: 1px solid #263244;
+}
+
+.detail-label {
+
+    color: #94a3b8;
+}
+
+.detail-value {
+
+    font-weight: bold;
+
+    text-align: right;
+}
+
+
+/* ============================================================
+   BUTTONS
+============================================================ */
+
+.buttons {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 20px;
+
+    flex-wrap: wrap;
+}
+
+button {
+
+    border: none;
+
+    border-radius: 7px;
+
+    padding: 12px 17px;
+
+    background: #2563eb;
+
+    color: white;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+button:hover {
+
+    background: #1d4ed8;
+}
+
+button:disabled {
+
+    background: #475569;
+
+    cursor: not-allowed;
+}
+
+.reset {
+
+    background: #475569;
+}
+
+.reset:hover {
+
+    background: #64748b;
+}
+
+
+/* ============================================================
+   ROUTE
+============================================================ */
+
+.route-box {
+
+    padding: 20px;
+
+    line-height: 2.5;
+}
+
+.route-node {
+
+    background: #1e293b;
+
+    border-radius: 7px;
+
+    padding: 9px 13px;
+
+    white-space: nowrap;
+}
+
+.route-arrow {
+
+    color: #22c55e;
+
+    font-weight: bold;
+
+    margin: 0 5px;
+}
+
+
+/* ============================================================
+   BALANCING
+============================================================ */
+
+.balance-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 15px;
+
+    padding: 20px;
+}
+
+.balance-card {
+
+    background: #0f172a;
+
+    border-radius: 10px;
+
+    padding: 20px;
+}
+
+.before {
+
+    border-left: 5px solid #dc2626;
+}
+
+.after {
+
+    border-left: 5px solid #16a34a;
+}
+
+.balance-card h3 {
+
+    margin-top: 0;
+}
+
+.big-number {
+
+    font-size: 30px;
+
+    font-weight: bold;
+
+    margin: 8px 0 15px;
+}
+
+
+/* ============================================================
+   SHIFT STATUS
+============================================================ */
+
+.shift-status {
+
+    margin: 0 20px 20px;
+
+    padding: 18px;
+
+    text-align: center;
+
+    background: #1e293b;
+
+    border-radius: 10px;
+}
+
+.shift-number {
+
+    font-size: 34px;
+
+    font-weight: bold;
+
+    color: #facc15;
+
+    margin: 5px;
+}
+
+.success {
+
+    color: #4ade80;
+
+    font-weight: bold;
+}
+
+
+/* ============================================================
+   COMPARISON TABLE
+============================================================ */
+
+.table-container {
+
+    padding: 20px;
+}
+
+table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+th,
+td {
+
+    padding: 13px;
+
+    border-bottom: 1px solid #263244;
+
+    text-align: center;
+}
+
+th {
+
+    color: #94a3b8;
+}
+
+
+/* ============================================================
    RESPONSIVE
 ============================================================ */
 
-@media(max-width:1100px) {
+@media(max-width: 1100px) {
 
     .cards {
 
@@ -621,7 +611,7 @@ th {
     }
 }
 
-@media(max-width:600px) {
+@media(max-width: 600px) {
 
     .cards {
 
@@ -631,6 +621,11 @@ th {
     .balance-grid {
 
         grid-template-columns: 1fr;
+    }
+
+    #network {
+
+        height: 400px;
     }
 }
 
@@ -653,8 +648,8 @@ th {
     </h1>
 
     <p>
-        Congestion Detection • Network Topology • Dijkstra • A*
-        • User Shifting Simulation
+        Congestion Detection • Network Topology •
+        Dijkstra • A* • User Shifting
     </p>
 
 </header>
@@ -668,13 +663,12 @@ th {
      STATUS
 ============================================================ -->
 
-<div class="status-bar">
+<div class="status">
 
     System Status:
 
     <span
-        id="systemStatus"
-        class="status-ok">
+        id="systemStatus">
 
         Loading Python results...
 
@@ -685,7 +679,7 @@ th {
 
 
 <!-- ============================================================
-     SUMMARY CARDS
+     SUMMARY
 ============================================================ -->
 
 <div class="cards">
@@ -728,7 +722,7 @@ th {
     <div class="card">
 
         <div class="card-title">
-            Network Sectors
+            Sectors
         </div>
 
         <div
@@ -788,26 +782,28 @@ th {
 
 
 <!-- ============================================================
-     LEFT SIDE
+     LEFT
 ============================================================ -->
 
 <div>
 
 
+    <!-- NETWORK -->
+
     <div class="panel">
 
         <div class="panel-title">
 
-            🌐 Telecom Network Topology
+            🌐 Network Topology — A* Optimized Route
 
         </div>
 
 
-        <div class="network-wrapper">
+        <div class="network-area">
 
             <svg
                 id="network"
-                viewBox="0 0 1100 650">
+                viewBox="0 0 1100 480">
 
             </svg>
 
@@ -815,6 +811,7 @@ th {
 
 
         <div class="legend">
+
 
             <div class="legend-item">
 
@@ -863,21 +860,43 @@ th {
 
             </div>
 
+
         </div>
 
     </div>
 
 
 
-    <!-- ========================================================
-         BALANCING
-    ========================================================= -->
+    <!-- ROUTE -->
 
     <div class="panel">
 
         <div class="panel-title">
 
-            ⚖️ User Load Balancing Simulation
+            🛣️ A* Optimized Route
+
+        </div>
+
+
+        <div
+            class="route-box"
+            id="route">
+
+            Loading route...
+
+        </div>
+
+    </div>
+
+
+
+    <!-- BALANCING -->
+
+    <div class="panel">
+
+        <div class="panel-title">
+
+            ⚖️ User Load Balancing
 
         </div>
 
@@ -905,7 +924,7 @@ th {
 
 
                 <p>
-                    Simulated Users
+                    Users
                 </p>
 
                 <div
@@ -1005,34 +1024,7 @@ th {
 
 
 
-    <!-- ========================================================
-         ROUTE
-    ========================================================= -->
-
-    <div class="panel">
-
-        <div class="panel-title">
-
-            🛣️ A* Optimized User-Shifting Route
-
-        </div>
-
-
-        <div
-            class="route-container"
-            id="route">
-
-            Loading route...
-
-        </div>
-
-    </div>
-
-
-
-    <!-- ========================================================
-         ALGORITHM COMPARISON
-    ========================================================= -->
+    <!-- ALGORITHM COMPARISON -->
 
     <div class="panel">
 
@@ -1117,17 +1109,19 @@ th {
 
 
 <!-- ============================================================
-     RIGHT SIDE
+     RIGHT
 ============================================================ -->
 
 <div>
 
 
+    <!-- TOWER DETAILS -->
+
     <div class="panel">
 
         <div class="panel-title">
 
-            📡 Selected Tower Details
+            📡 Tower Details
 
         </div>
 
@@ -1206,7 +1200,7 @@ th {
             <div class="detail-row">
 
                 <span class="detail-label">
-                    Network Role
+                    Role
                 </span>
 
                 <span
@@ -1248,9 +1242,7 @@ th {
 
 
 
-    <!-- ========================================================
-         CONGESTION INFORMATION
-    ========================================================= -->
+    <!-- CONGESTION -->
 
     <div class="panel">
 
@@ -1349,41 +1341,44 @@ th {
 
 <script>
 
-
-// ============================================================
-// GLOBAL DATA
-// ============================================================
+/* ============================================================
+   GLOBAL DATA
+============================================================ */
 
 let DATA = null;
 
-let selectedTower = null;
-
 let simulationRunning = false;
 
-let simulationComplete = false;
 
-let userPositions = [];
-
-let animationTimer = null;
-
-
-
-// ============================================================
-// LOAD PYTHON RESULTS
-// ============================================================
+/* ============================================================
+   LOAD PYTHON RESULTS
+============================================================ */
 
 async function loadResults() {
 
+    const status =
+        document.getElementById(
+            "systemStatus"
+        );
+
+
     try {
 
+        status.innerText =
+            "Connecting to Python...";
+
+
         const response =
-            await fetch("/api/results");
+            await fetch(
+                "/api/results"
+            );
 
 
         if (!response.ok) {
 
             throw new Error(
-                "Could not load Python results."
+                "API error: " +
+                response.status
             );
 
         }
@@ -1393,9 +1388,13 @@ async function loadResults() {
             await response.json();
 
 
-        document.getElementById(
-            "systemStatus"
-        ).innerText =
+        console.log(
+            "Python results:",
+            DATA
+        );
+
+
+        status.innerText =
             "✓ Python algorithm connected";
 
 
@@ -1409,30 +1408,38 @@ async function loadResults() {
 
         drawNetwork();
 
-        selectTower(DATA.source);
+
+        if (DATA.source) {
+
+            showTower(
+                DATA.source
+            );
+
+        }
 
 
     }
 
-    catch(error) {
+    catch (error) {
 
-        console.error(error);
+        console.error(
+            "Dashboard error:",
+            error
+        );
 
 
-        document.getElementById(
-            "systemStatus"
-        ).innerText =
-            "❌ " + error.message;
+        status.innerText =
+            "❌ " +
+            error.message;
 
     }
 
 }
 
 
-
-// ============================================================
-// SUMMARY
-// ============================================================
+/* ============================================================
+   SUMMARY
+============================================================ */
 
 function displaySummary() {
 
@@ -1440,125 +1447,135 @@ function displaySummary() {
         "records"
     ).innerText =
         Number(
-            DATA.dataset_records
+            DATA.dataset_records || 0
         ).toLocaleString();
 
 
     document.getElementById(
         "stations"
     ).innerText =
-        DATA.base_stations;
+        DATA.base_stations || 0;
 
 
     document.getElementById(
         "sectors"
     ).innerText =
-        DATA.sectors;
+        DATA.sectors || 0;
 
 
     document.getElementById(
         "edges"
     ).innerText =
-        DATA.network_edges;
+        DATA.network_edges || 0;
 
 
     document.getElementById(
         "sourceCard"
     ).innerText =
-        DATA.source;
+        DATA.source || "—";
 
 }
 
 
-
-// ============================================================
-// ANALYSIS
-// ============================================================
+/* ============================================================
+   CONGESTION
+============================================================ */
 
 function displayAnalysis() {
 
     document.getElementById(
         "analysisSource"
     ).innerText =
-        DATA.source;
+        DATA.source || "—";
 
 
     document.getElementById(
         "analysisSourceLoad"
     ).innerText =
         Number(
-            DATA.source_load
+            DATA.source_load || 0
         ).toFixed(6);
 
 
     document.getElementById(
         "analysisTarget"
     ).innerText =
-        DATA.target;
+        DATA.target || "—";
 
 
     document.getElementById(
         "analysisTargetLoad"
     ).innerText =
         Number(
-            DATA.target_load
+            DATA.target_load || 0
         ).toFixed(6);
 
 }
 
 
-
-// ============================================================
-// ALGORITHMS
-// ============================================================
+/* ============================================================
+   ALGORITHM COMPARISON
+============================================================ */
 
 function displayAlgorithms() {
 
     document.getElementById(
         "dijkstraCost"
     ).innerText =
-        DATA.dijkstra_cost;
+        DATA.dijkstra_cost ?? "—";
 
 
     document.getElementById(
         "astarCost"
     ).innerText =
-        DATA.astar_cost;
+        DATA.astar_cost ?? "—";
 
 
     document.getElementById(
         "dijkstraNodes"
     ).innerText =
-        DATA.dijkstra_nodes;
+        DATA.dijkstra_nodes ?? "—";
 
 
     document.getElementById(
         "astarNodes"
     ).innerText =
-        DATA.astar_nodes;
+        DATA.astar_nodes ?? "—";
 
 }
 
 
-
-// ============================================================
-// ROUTE
-// ============================================================
+/* ============================================================
+   A* ROUTE
+============================================================ */
 
 function displayRoute() {
 
-    const container =
+    const box =
         document.getElementById(
             "route"
         );
 
 
-    container.innerHTML = "";
+    box.innerHTML = "";
 
 
-    DATA.astar_path.forEach(
+    const path =
+        DATA.astar_path || [];
+
+
+    if (path.length === 0) {
+
+        box.innerText =
+            "No A* route available.";
+
+        return;
+
+    }
+
+
+    path.forEach(
         function(node, index) {
-
 
             const span =
                 document.createElement(
@@ -1574,14 +1591,14 @@ function displayRoute() {
                 node;
 
 
-            container.appendChild(
+            box.appendChild(
                 span
             );
 
 
-            if(
+            if (
                 index <
-                DATA.astar_path.length - 1
+                path.length - 1
             ) {
 
                 const arrow =
@@ -1598,7 +1615,7 @@ function displayRoute() {
                     " → ";
 
 
-                container.appendChild(
+                box.appendChild(
                     arrow
                 );
 
@@ -1610,25 +1627,31 @@ function displayRoute() {
 }
 
 
-
-// ============================================================
-// GET NODE STATUS
-// ============================================================
+/* ============================================================
+   GET TOWER STATUS
+============================================================ */
 
 function getStatus(load) {
 
-    if(
-        load <= DATA.low_threshold
-    ) {
+    const low =
+        Number(
+            DATA.low_threshold || 0
+        );
+
+    const high =
+        Number(
+            DATA.high_threshold || 0
+        );
+
+
+    if (load <= low) {
 
         return "Low";
 
     }
 
 
-    if(
-        load <= DATA.high_threshold
-    ) {
+    if (load <= high) {
 
         return "Moderate";
 
@@ -1640,95 +1663,76 @@ function getStatus(load) {
 }
 
 
-
-// ============================================================
-// DRAW NETWORK
-// ============================================================
+/* ============================================================
+   DRAW SIMPLE NETWORK
+============================================================ */
 
 function drawNetwork() {
 
-    const svg = document.getElementById("network");
+    const svg =
+        document.getElementById(
+            "network"
+        );
+
 
     svg.innerHTML = "";
 
-    const allNodes = Object.keys(DATA.node_loads);
 
-    // ========================================================
-    // SELECT ONLY IMPORTANT NODES
-    // ========================================================
+    /*
+       IMPORTANT:
 
-    let importantNodes = [];
+       We only show the A* path.
 
-    // 1. Add A* path
-    DATA.astar_path.forEach(node => {
+       This prevents all 73 sectors from
+       overlapping and makes the graph
+       easy to explain.
+    */
 
-        if (!importantNodes.includes(node)) {
-            importantNodes.push(node);
-        }
+    const path =
+        DATA.astar_path || [];
 
-    });
 
-    // 2. Add source
-    if (!importantNodes.includes(DATA.source)) {
-        importantNodes.unshift(DATA.source);
+    if (path.length === 0) {
+
+        return;
+
     }
 
-    // 3. Add target
-    if (!importantNodes.includes(DATA.target)) {
-        importantNodes.push(DATA.target);
-    }
 
-    // 4. Add a few high-load towers
-    const highLoadNodes = allNodes
-        .sort(
-            (a, b) =>
-                DATA.node_loads[b] -
-                DATA.node_loads[a]
-        );
+    const nodes =
+        path;
 
-    highLoadNodes.forEach(node => {
-
-        if (
-            importantNodes.length < 10 &&
-            !importantNodes.includes(node)
-        ) {
-
-            importantNodes.push(node);
-
-        }
-
-    });
-
-
-    // ========================================================
-    // LIMIT TO 10 NODES
-    // ========================================================
-
-    importantNodes =
-        importantNodes.slice(0, 10);
-
-
-    // ========================================================
-    // POSITION NODES
-    // ========================================================
 
     const positions = {};
 
-    const startX = 120;
 
-    const endX = 980;
+    const startX = 100;
 
-    const centerY = 300;
+    const endX = 1000;
 
-    const spacing =
-        importantNodes.length > 1
-            ? (endX - startX) /
-              (importantNodes.length - 1)
-            : 0;
+    const centerY = 230;
 
 
-    importantNodes.forEach(
-        (node, index) => {
+    let spacing = 0;
+
+
+    if (nodes.length > 1) {
+
+        spacing =
+            (
+                endX -
+                startX
+            )
+            /
+            (
+                nodes.length - 1
+            );
+
+    }
+
+
+    nodes.forEach(
+        function(node, index) {
 
             positions[node] = {
 
@@ -1745,516 +1749,26 @@ function drawNetwork() {
     );
 
 
-    // ========================================================
-    // DRAW EDGES
-    // ========================================================
+    /*
+       Draw connections
+    */
 
     for (
-        let i = 0;
-        i < importantNodes.length - 1;
-        i++
-    ) {
-
-        const node1 =
-            importantNodes[i];
-
-        const node2 =
-            importantNodes[i + 1];
-
-        const p1 =
-            positions[node1];
-
-        const p2 =
-            positions[node2];
-
-
-        const line =
-            document.createElementNS(
-                "http://www.w3.org/2000/svg",
-                "line"
-            );
-
-
-        line.setAttribute(
-            "x1",
-            p1.x
-        );
-
-        line.setAttribute(
-            "y1",
-            p1.y
-        );
-
-        line.setAttribute(
-            "x2",
-            p2.x
-        );
-
-        line.setAttribute(
-            "y2",
-            p2.y
-        );
-
-
-        // Check whether this edge belongs
-        // to the A* path
-
-        const pathIndex =
-            DATA.astar_path.indexOf(
-                node1
-            );
-
-        const nextPath =
-            DATA.astar_path[
-                pathIndex + 1
-            ];
-
-
-        if (
-            DATA.astar_path.includes(node1) &&
-            nextPath === node2
-        ) {
-
-            line.setAttribute(
-                "class",
-                "route-edge"
-            );
-
-        }
-
-        else {
-
-            line.setAttribute(
-                "class",
-                "edge"
-            );
-
-        }
-
-
-        svg.appendChild(line);
-
-    }
-
-
-    // ========================================================
-    // DRAW NODES
-    // ========================================================
-
-    importantNodes.forEach(
-        node => {
-
-            const position =
-                positions[node];
-
-            const load =
-                DATA.node_loads[node];
-
-            const status =
-                getStatus(load);
-
-
-            const group =
-                document.createElementNS(
-                    "http://www.w3.org/2000/svg",
-                    "g"
-                );
-
-
-            group.setAttribute(
-                "class",
-                "node"
-            );
-
-
-            // ------------------------------------------------
-            // NODE COLOR
-            // ------------------------------------------------
-
-            let nodeClass =
-                "normal-node";
-
-
-            if (
-                node === DATA.source
-            ) {
-
-                nodeClass =
-                    "source-node";
-
-            }
-
-            else if (
-                node === DATA.target
-            ) {
-
-                nodeClass =
-                    "target-node";
-
-            }
-
-            else if (
-                status === "High"
-            ) {
-
-                nodeClass =
-                    "high-node";
-
-            }
-
-
-            // ------------------------------------------------
-            // CIRCLE
-            // ------------------------------------------------
-
-            const circle =
-                document.createElementNS(
-                    "http://www.w3.org/2000/svg",
-                    "circle"
-                );
-
-
-            circle.setAttribute(
-                "cx",
-                position.x
-            );
-
-            circle.setAttribute(
-                "cy",
-                position.y
-            );
-
-            circle.setAttribute(
-                "r",
-                30
-            );
-
-
-            circle.setAttribute(
-                "class",
-                "node-circle " +
-                nodeClass
-            );
-
-
-            group.appendChild(circle);
-
-
-            // ------------------------------------------------
-            // LOAD VALUE
-            // ------------------------------------------------
-
-            const loadText =
-                document.createElementNS(
-                    "http://www.w3.org/2000/svg",
-                    "text"
-                );
-
-
-            loadText.setAttribute(
-                "x",
-                position.x
-            );
-
-            loadText.setAttribute(
-                "y",
-                position.y + 5
-            );
-
-            loadText.setAttribute(
-                "class",
-                "user-label"
-            );
-
-
-            loadText.textContent =
-                Math.round(
-                    load * 1000
-                ) +
-                " users";
-
-
-            group.appendChild(
-                loadText
-            );
-
-
-            // ------------------------------------------------
-            // TOWER NAME
-            // ------------------------------------------------
-
-            const label =
-                document.createElementNS(
-                    "http://www.w3.org/2000/svg",
-                    "text"
-                );
-
-
-            label.setAttribute(
-                "x",
-                position.x
-            );
-
-            label.setAttribute(
-                "y",
-                position.y + 55
-            );
-
-
-            label.setAttribute(
-                "class",
-                "node-label"
-            );
-
-
-            label.textContent =
-                node;
-
-
-            group.appendChild(
-                label
-            );
-
-
-            // ------------------------------------------------
-            // STATUS
-            // ------------------------------------------------
-
-            const statusText =
-                document.createElementNS(
-                    "http://www.w3.org/2000/svg",
-                    "text"
-                );
-
-
-            statusText.setAttribute(
-                "x",
-                position.x
-            );
-
-            statusText.setAttribute(
-                "y",
-                position.y + 72
-            );
-
-
-            statusText.setAttribute(
-                "class",
-                "node-label"
-            );
-
-
-            statusText.textContent =
-                status;
-
-
-            group.appendChild(
-                statusText
-            );
-
-
-            // ------------------------------------------------
-            // CLICK TOWER
-            // ------------------------------------------------
-
-            group.addEventListener(
-                "click",
-                function () {
-
-                    selectTower(node);
-
-                }
-            );
-
-
-            svg.appendChild(group);
-
-        }
-    );
-
-
-    // ========================================================
-    // SAVE POSITIONS FOR ANIMATION
-    // ========================================================
-
-    window.networkPositions =
-        positions;
-
-}
-
-
-    // --------------------------------------------------------
-    // NODE POSITIONS
-    // --------------------------------------------------------
-
-    nodes.forEach(
-        function(node, index) {
-
-            const angle =
-                (
-                    2 *
-                    Math.PI *
-                    index
-                )
-                /
-                nodes.length;
-
-
-            positions[node] = {
-
-                x:
-                    centerX +
-                    radius *
-                    Math.cos(angle),
-
-                y:
-                    centerY +
-                    radius *
-                    Math.sin(angle)
-
-            };
-
-        }
-    );
-
-
-
-    // --------------------------------------------------------
-    // NORMAL EDGES
-    //
-    // We create visual connections based on
-    // the algorithm path and nearby nodes.
-    // --------------------------------------------------------
-
-    const edgePairs = [];
-
-
-    // Connect consecutive nodes
-    for(
         let i = 0;
         i < nodes.length - 1;
         i++
     ) {
 
-        edgePairs.push(
-            [
-                nodes[i],
-                nodes[i + 1]
-            ]
-        );
-
-    }
-
-
-    // Additional connections
-    for(
-        let i = 0;
-        i < nodes.length - 3;
-        i += 3
-    ) {
-
-        edgePairs.push(
-            [
-                nodes[i],
-                nodes[i + 3]
-            ]
-        );
-
-    }
-
-
-
-    // --------------------------------------------------------
-    // DRAW NORMAL EDGES
-    // --------------------------------------------------------
-
-    edgePairs.forEach(
-        function(edge) {
-
-            const a =
-                positions[edge[0]];
-
-            const b =
-                positions[edge[1]];
-
-
-            if(!a || !b) {
-
-                return;
-
-            }
-
-
-            const line =
-                document.createElementNS(
-                    "http://www.w3.org/2000/svg",
-                    "line"
-                );
-
-
-            line.setAttribute(
-                "x1",
-                a.x
-            );
-
-            line.setAttribute(
-                "y1",
-                a.y
-            );
-
-            line.setAttribute(
-                "x2",
-                b.x
-            );
-
-            line.setAttribute(
-                "y2",
-                b.y
-            );
-
-
-            line.setAttribute(
-                "class",
-                "edge"
-            );
-
-
-            svg.appendChild(
-                line
-            );
-
-        }
-    );
-
-
-
-    // --------------------------------------------------------
-    // DRAW A* ROUTE
-    // --------------------------------------------------------
-
-    for(
-        let i = 0;
-        i < DATA.astar_path.length - 1;
-        i++
-    ) {
-
         const a =
             positions[
-                DATA.astar_path[i]
+                nodes[i]
             ];
 
 
         const b =
             positions[
-                DATA.astar_path[i + 1]
+                nodes[i + 1]
             ];
-
-
-        if(!a || !b) {
-
-            continue;
-
-        }
 
 
         const line =
@@ -2298,24 +1812,57 @@ function drawNetwork() {
     }
 
 
-
-    // --------------------------------------------------------
-    // DRAW NODES
-    // --------------------------------------------------------
+    /*
+       Draw towers
+    */
 
     nodes.forEach(
         function(node) {
 
-            const position =
+            const p =
                 positions[node];
 
 
             const load =
-                DATA.node_loads[node];
+                Number(
+                    DATA.node_loads[node] || 0
+                );
 
 
             const status =
                 getStatus(load);
+
+
+            let className =
+                "normal-node";
+
+
+            if (
+                node === DATA.source
+            ) {
+
+                className =
+                    "source-node";
+
+            }
+
+            else if (
+                node === DATA.target
+            ) {
+
+                className =
+                    "target-node";
+
+            }
+
+            else if (
+                status === "High"
+            ) {
+
+                className =
+                    "high-node";
+
+            }
 
 
             const group =
@@ -2331,46 +1878,9 @@ function drawNetwork() {
             );
 
 
-            // ----------------------------------------------
-            // NODE COLOR
-            // ----------------------------------------------
-
-            let className =
-                "normal-node";
-
-
-            if(
-                node === DATA.source
-            ) {
-
-                className =
-                    "source-node";
-
-            }
-
-            else if(
-                node === DATA.target
-            ) {
-
-                className =
-                    "target-node";
-
-            }
-
-            else if(
-                status === "High"
-            ) {
-
-                className =
-                    "high-node";
-
-            }
-
-
-
-            // ----------------------------------------------
-            // CIRCLE
-            // ----------------------------------------------
+            /*
+               Circle
+            */
 
             const circle =
                 document.createElementNS(
@@ -2381,21 +1891,17 @@ function drawNetwork() {
 
             circle.setAttribute(
                 "cx",
-                position.x
+                p.x
             );
 
             circle.setAttribute(
                 "cy",
-                position.y
+                p.y
             );
-
 
             circle.setAttribute(
                 "r",
-                node === DATA.source ||
-                node === DATA.target
-                    ? 23
-                    : 18
+                34
             );
 
 
@@ -2411,10 +1917,13 @@ function drawNetwork() {
             );
 
 
+            /*
+               User count
 
-            // ----------------------------------------------
-            // LOAD / USER DISPLAY
-            // ----------------------------------------------
+               Current Python API provides
+               load, so this is a visual
+               representation.
+            */
 
             const userText =
                 document.createElementNS(
@@ -2425,26 +1934,26 @@ function drawNetwork() {
 
             userText.setAttribute(
                 "x",
-                position.x
+                p.x
             );
-
 
             userText.setAttribute(
                 "y",
-                position.y + 4
+                p.y + 5
             );
 
 
             userText.setAttribute(
                 "class",
-                "user-label"
+                "node-users"
             );
 
 
             userText.textContent =
                 Math.round(
                     load * 1000
-                );
+                ) +
+                " users";
 
 
             group.appendChild(
@@ -2452,55 +1961,89 @@ function drawNetwork() {
             );
 
 
+            /*
+               Tower name
+            */
 
-            // ----------------------------------------------
-            // NODE NAME
-            // ----------------------------------------------
-
-            const label =
+            const nameText =
                 document.createElementNS(
                     "http://www.w3.org/2000/svg",
                     "text"
                 );
 
 
-            label.setAttribute(
+            nameText.setAttribute(
                 "x",
-                position.x
+                p.x
             );
 
-
-            label.setAttribute(
+            nameText.setAttribute(
                 "y",
-                position.y + 42
+                p.y + 60
             );
 
 
-            label.setAttribute(
+            nameText.setAttribute(
                 "class",
-                "node-label"
+                "node-name"
             );
 
 
-            label.textContent =
+            nameText.textContent =
                 node;
 
 
             group.appendChild(
-                label
+                nameText
             );
 
 
+            /*
+               Status
+            */
 
-            // ----------------------------------------------
-            // CLICK
-            // ----------------------------------------------
+            const statusText =
+                document.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    "text"
+                );
+
+
+            statusText.setAttribute(
+                "x",
+                p.x
+            );
+
+            statusText.setAttribute(
+                "y",
+                p.y + 78
+            );
+
+
+            statusText.setAttribute(
+                "class",
+                "node-status"
+            );
+
+
+            statusText.textContent =
+                status;
+
+
+            group.appendChild(
+                statusText
+            );
+
+
+            /*
+               Click tower
+            */
 
             group.addEventListener(
                 "click",
                 function() {
 
-                    selectTower(node);
+                    showTower(node);
 
                 }
             );
@@ -2513,32 +2056,19 @@ function drawNetwork() {
         }
     );
 
-
-    // Save positions for animation
-
-    window.networkPositions =
-        positions;
-
 }
 
 
+/* ============================================================
+   SHOW TOWER DETAILS
+============================================================ */
 
-// ============================================================
-// SELECT TOWER
-// ============================================================
-
-function selectTower(node) {
-
-    selectedTower =
-        node;
-
+function showTower(node) {
 
     const load =
-        DATA.node_loads[node];
-
-
-    const status =
-        getStatus(load);
+        Number(
+            DATA.node_loads[node] || 0
+        );
 
 
     document.getElementById(
@@ -2547,7 +2077,11 @@ function selectTower(node) {
         node;
 
 
-    // Sector extraction
+    /*
+       Example:
+       Site 196-3
+       Sector = 3
+    */
 
     const parts =
         node.split("-");
@@ -2556,71 +2090,71 @@ function selectTower(node) {
     document.getElementById(
         "towerSector"
     ).innerText =
-        parts.length > 1
-            ? parts[parts.length - 1]
-            : "—";
+        parts[
+            parts.length - 1
+        ];
 
 
     document.getElementById(
         "towerLoad"
     ).innerText =
-        Number(load).toFixed(6);
+        load.toFixed(6);
 
 
     document.getElementById(
         "towerStatus"
     ).innerText =
-        status;
+        getStatus(load);
 
 
-    let role =
-        "Normal Tower";
-
-
-    if(
+    if (
         node === DATA.source
     ) {
 
-        role =
+        document.getElementById(
+            "towerRole"
+        ).innerText =
             "🔴 Congested Source";
 
     }
 
-    else if(
+    else if (
         node === DATA.target
     ) {
 
-        role =
-            "🟢 Selected Target";
+        document.getElementById(
+            "towerRole"
+        ).innerText =
+            "🟢 Target Tower";
 
     }
 
+    else {
 
-    document.getElementById(
-        "towerRole"
-    ).innerText =
-        role;
+        document.getElementById(
+            "towerRole"
+        ).innerText =
+            "🔵 Network Tower";
+
+    }
 
 }
 
 
+/* ============================================================
+   VISUAL USER COUNT
+============================================================ */
 
-// ============================================================
-// SIMULATED USER COUNT
-//
-// Current Python API gives load values.
-// Therefore we convert load to a visual user count.
-// This is for demonstration only.
-// ============================================================
-
-function getVisualUsers(node) {
+function getUsers(node) {
 
     const load =
-        DATA.node_loads[node];
+        Number(
+            DATA.node_loads[node] || 0
+        );
 
 
     return Math.max(
-        10,
+        1,
         Math.round(
             load * 1000
         )
@@ -2629,71 +2163,16 @@ function getVisualUsers(node) {
 }
 
 
+/* ============================================================
+   USER SHIFTING
+============================================================ */
 
-// ============================================================
-// USER SHIFT CALCULATION
-// ============================================================
+function simulateShifting() {
 
-function calculateShift() {
-
-    const sourceUsers =
-        getVisualUsers(
-            DATA.source
-        );
-
-
-    const targetUsers =
-        getVisualUsers(
-            DATA.target
-        );
-
-
-    let shift =
-        Math.floor(
-            (
-                sourceUsers
-                -
-                targetUsers
-            ) / 2
-        );
-
-
-    shift =
-        Math.max(
-            1,
-            shift
-        );
-
-
-    shift =
-        Math.min(
-            shift,
-            Math.floor(
-                sourceUsers * 0.4
-            )
-        );
-
-
-    return shift;
-
-}
-
-
-
-// ============================================================
-// SIMULATION
-// ============================================================
-
-async function simulateShifting() {
-
-    if(!DATA) {
-
-        return;
-
-    }
-
-
-    if(simulationRunning) {
+    if (
+        !DATA ||
+        simulationRunning
+    ) {
 
         return;
 
@@ -2701,20 +2180,6 @@ async function simulateShifting() {
 
 
     simulationRunning =
-        true;
-
-
-    simulationComplete =
-        false;
-
-
-    const button =
-        document.getElementById(
-            "simulateButton"
-        );
-
-
-    button.disabled =
         true;
 
 
@@ -2727,16 +2192,51 @@ async function simulateShifting() {
 
 
     const sourceUsers =
-        getVisualUsers(source);
+        getUsers(source);
 
 
     const targetUsers =
-        getVisualUsers(target);
+        getUsers(target);
 
 
-    const shift =
-        calculateShift();
+    /*
+       Shift approximately half the
+       difference between source and target.
+    */
 
+    let shifted =
+        Math.floor(
+            (
+                sourceUsers -
+                targetUsers
+            ) / 2
+        );
+
+
+    shifted =
+        Math.max(
+            1,
+            shifted
+        );
+
+
+    /*
+       Don't shift more than 40%
+       of source users.
+    */
+
+    shifted =
+        Math.min(
+            shifted,
+            Math.floor(
+                sourceUsers * 0.4
+            )
+        );
+
+
+    /*
+       BEFORE
+    */
 
     document.getElementById(
         "beforeTower"
@@ -2758,332 +2258,111 @@ async function simulateShifting() {
         ).toFixed(6);
 
 
-    document.getElementById(
-        "afterTower"
-    ).innerText =
-        target;
-
-
-    document.getElementById(
-        "shiftCount"
-    ).innerText =
-        shift;
-
+    /*
+       Animation-style progress
+    */
 
     document.getElementById(
         "shiftMessage"
     ).innerText =
-        "Detecting congestion...";
+        "A* route selected...";
 
 
-    await sleep(800);
+    setTimeout(
+        function() {
+
+            document.getElementById(
+                "shiftMessage"
+            ).innerText =
+                "Shifting users from " +
+                source +
+                " to " +
+                target +
+                "...";
 
 
-    document.getElementById(
-        "shiftMessage"
-    ).innerText =
-        "A* selected the optimized route.";
+            document.getElementById(
+                "shiftCount"
+            ).innerText =
+                shifted;
 
 
-    await sleep(800);
-
-
-    document.getElementById(
-        "shiftMessage"
-    ).innerText =
-        "Moving users from " +
-        source +
-        " to " +
-        target +
-        "...";
-
-
-    await animateUsers(
-        source,
-        target,
-        shift
+        },
+        800
     );
 
 
-    // --------------------------------------------------------
-    // AFTER VALUES
-    // --------------------------------------------------------
+    /*
+       AFTER
+    */
 
-    const finalSource =
-        sourceUsers - shift;
+    setTimeout(
+        function() {
 
-
-    const finalTarget =
-        targetUsers + shift;
-
-
-    document.getElementById(
-        "afterSource"
-    ).innerText =
-        finalSource;
+            document.getElementById(
+                "afterSource"
+            ).innerText =
+                sourceUsers -
+                shifted;
 
 
-    document.getElementById(
-        "afterTarget"
-    ).innerText =
-        finalTarget;
+            document.getElementById(
+                "afterTarget"
+            ).innerText =
+                targetUsers +
+                shifted;
 
 
-    document.getElementById(
-        "shiftMessage"
-    ).innerHTML =
-        "<span class='success'>" +
-        "✓ User shifting completed successfully" +
-        "</span>";
+            document.getElementById(
+                "afterTower"
+            ).innerText =
+                target;
 
 
-    simulationComplete =
-        true;
+            document.getElementById(
+                "shiftMessage"
+            ).innerHTML =
+                "<span class='success'>" +
+                "✓ User shifting completed" +
+                "</span>";
 
 
-    simulationRunning =
-        false;
+            simulationRunning =
+                false;
 
-
-    button.disabled =
-        false;
+        },
+        1800
+    );
 
 }
 
 
+/* ============================================================
+   RESET
+============================================================ */
 
-// ============================================================
-// ANIMATE USERS
-// ============================================================
+function resetSimulation() {
 
-async function animateUsers(
-    source,
-    target,
-    count
-) {
-
-    const svg =
-        document.getElementById(
-            "network"
-        );
-
-
-    const positions =
-        window.networkPositions;
-
-
-    const path =
-        DATA.astar_path;
-
-
-    if(
-        !path ||
-        path.length < 2
-    ) {
-
-        await sleep(1000);
+    if (!DATA) {
 
         return;
 
     }
 
 
-    // Number of visual dots
-
-    const dots =
-        Math.min(
-            20,
-            Math.max(
-                8,
-                Math.round(
-                    count / 5
-                )
-            )
-        );
-
-
-    for(
-        let d = 0;
-        d < dots;
-        d++
-    ) {
-
-        const dot =
-            document.createElementNS(
-                "http://www.w3.org/2000/svg",
-                "circle"
-            );
-
-
-        dot.setAttribute(
-            "r",
-            6
-        );
-
-
-        dot.setAttribute(
-            "class",
-            "user-dot"
-        );
-
-
-        svg.appendChild(
-            dot
-        );
-
-
-        animateDot(
-            dot,
-            path,
-            positions,
-            d * 150
-        );
-
-    }
-
-
-    await sleep(
-        path.length * 650 + 1200
-    );
-
-}
-
-
-
-// ============================================================
-// ANIMATE ONE DOT
-// ============================================================
-
-function animateDot(
-    dot,
-    path,
-    positions,
-    delay
-) {
-
-    setTimeout(
-        async function() {
-
-            for(
-                let i = 0;
-                i < path.length - 1;
-                i++
-            ) {
-
-                const a =
-                    positions[
-                        path[i]
-                    ];
-
-
-                const b =
-                    positions[
-                        path[i + 1]
-                    ];
-
-
-                if(!a || !b) {
-
-                    continue;
-
-                }
-
-
-                const steps =
-                    20;
-
-
-                for(
-                    let step = 0;
-                    step <= steps;
-                    step++
-                ) {
-
-                    const t =
-                        step / steps;
-
-
-                    const x =
-                        a.x +
-                        (
-                            b.x - a.x
-                        ) * t;
-
-
-                    const y =
-                        a.y +
-                        (
-                            b.y - a.y
-                        ) * t;
-
-
-                    dot.setAttribute(
-                        "cx",
-                        x
-                    );
-
-
-                    dot.setAttribute(
-                        "cy",
-                        y
-                    );
-
-
-                    await sleep(
-                        25
-                    );
-
-                }
-
-            }
-
-
-            dot.remove();
-
-        },
-        delay
-    );
-
-}
-
-
-
-// ============================================================
-// RESET
-// ============================================================
-
-function resetSimulation() {
-
     simulationRunning =
         false;
 
 
-    simulationComplete =
-        false;
-
-
-    if(animationTimer) {
-
-        clearTimeout(
-            animationTimer
-        );
-
-    }
-
-
-    document
-        .querySelectorAll(
-            ".user-dot"
-        )
-        .forEach(
-            dot =>
-                dot.remove()
-        );
-
-
     const sourceUsers =
-        getVisualUsers(
+        getUsers(
             DATA.source
+        );
+
+
+    const targetUsers =
+        getUsers(
+            DATA.target
         );
 
 
@@ -3100,6 +2379,14 @@ function resetSimulation() {
 
 
     document.getElementById(
+        "beforeLoad"
+    ).innerText =
+        Number(
+            DATA.source_load
+        ).toFixed(6);
+
+
+    document.getElementById(
         "afterSource"
     ).innerText =
         sourceUsers;
@@ -3108,9 +2395,7 @@ function resetSimulation() {
     document.getElementById(
         "afterTarget"
     ).innerText =
-        getVisualUsers(
-            DATA.target
-        );
+        targetUsers;
 
 
     document.getElementById(
@@ -3122,7 +2407,7 @@ function resetSimulation() {
     document.getElementById(
         "shiftCount"
     ).innerText =
-        0;
+        "0";
 
 
     document.getElementById(
@@ -3130,45 +2415,16 @@ function resetSimulation() {
     ).innerText =
         'Click "Simulate User Shifting"';
 
-
-    document.getElementById(
-        "simulateButton"
-    ).disabled =
-        false;
-
-
-    drawNetwork();
-
 }
 
 
-
-// ============================================================
-// DELAY
-// ============================================================
-
-function sleep(ms) {
-
-    return new Promise(
-        resolve =>
-            setTimeout(
-                resolve,
-                ms
-            )
-    );
-
-}
-
-
-
-// ============================================================
-// START
-// ============================================================
+/* ============================================================
+   START
+============================================================ */
 
 loadResults();
 
 </script>
-
 
 </body>
 
